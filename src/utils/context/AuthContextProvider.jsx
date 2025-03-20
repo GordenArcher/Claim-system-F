@@ -80,7 +80,7 @@ const AuthContextProvider = ({children}) => {
 
       async function fetchCsrfToken() {
         try {
-          const response = await fetch('http://localhost:8000/api/get-csrf-token/', {
+          const response = await fetch(`${url}/get-csrf-token/`, {
             credentials: 'include',
           });
           const data = await response.json();

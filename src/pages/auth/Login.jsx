@@ -28,7 +28,8 @@ const Login = () => {
       const response = await fetch(`${BASE_URL}/auth/login/`, {
         method:"POST", 
         headers:{
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          'X-CSRFToken': localStorage.getItem("csrf"),
         }, 
         body: JSON.stringify({"email": loginData.email, "password": loginData.password}), credentials:"include"})
   

@@ -32,7 +32,8 @@ const Register = () => {
       const response = await fetch(`${BASE_URL}/auth/register/`, {
         method:"POST", 
         headers:{
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          'X-CSRFToken': localStorage.getItem("csrf"),
         }, 
         body: JSON.stringify({
           first_name: registerData.first_name,

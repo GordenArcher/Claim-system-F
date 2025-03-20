@@ -24,13 +24,14 @@ const Verify_Claim = () => {
         credentials: "include",
       });
 
-      const data = await response.json();
       
       if (response.ok) {
+      const data = await response.json();
         setStaff_claim(data);
       } else {
-        const errorMessage = typeof data === 'string' ? data : 
-          data.detail || data.message || "Failed to retrieve claim information";
+
+      const errorData = await response.json();
+      const errorMessage = typeof errorData === 'string' ? errorData : errorData.detail || errorData.message || "Failed to retrieve claim information";
         setError(errorMessage);
         toast.error(errorMessage);
       }

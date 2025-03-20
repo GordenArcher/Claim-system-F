@@ -4,7 +4,7 @@ import SelectedClaim from "../../components/SelectedClaim";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader, Menu } from "lucide-react";
 import Back from "../../components/Back";
-import Pay_Claim from "../../api/Pay_Claim";
+import PayClaim from "../../api/Pay_Claim";
 
 const Pending_claims = () => {
 
@@ -12,7 +12,7 @@ const Pending_claims = () => {
     const [selectedClaim, setSelectedClaim] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
-    const { isLoading, claim_payment } = Pay_Claim();
+    const { isLoading, claim_payment } = PayClaim();
 
     const openModal = (claim) => {
       setSelectedClaim(claim);

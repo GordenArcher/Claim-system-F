@@ -4,6 +4,7 @@ import Verify_Claim from '../../api/verify_Claim';
 import Back from '../../components/Back';
 import { Menu } from "lucide-react";
 import SelectedClaim from '../../components/SelectedClaim';
+import PayClaim from '../../api/Pay_Claim';
 
 const ClaimSearchAndDisplay = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -33,16 +34,17 @@ const ClaimSearchAndDisplay = () => {
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
-    });
+    })
   };
 
-  // Helper function to extract error message
   const getErrorMessage = (error) => {
     if (typeof error === 'string') return error;
     if (error?.detail) return error.detail;
     if (error?.message) return error.message;
     return 'An error occurred while retrieving claim information';
   };
+
+  const { isLoading, claim_payment } = PayClaim();
 
   return (
     <div className="w-full mt-6 max-w-6xl mx-auto p-4">
@@ -101,8 +103,10 @@ const ClaimSearchAndDisplay = () => {
           </div>
 
           <div className="max-h-[500px] overflow-y-auto border border-gray-300">
-            <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50 sticky top-0 z-10">
+            
+          </div>
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Claim Number
@@ -149,7 +153,17 @@ const ClaimSearchAndDisplay = () => {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm">
-                  {staff_claim.data.status === "pending" ? "Pay" : "Already Paid"}
+                  {staff_claim.data.status === "pending" ? (
+                    <div>
+                      <button 
+                            onClick={() => claim_payment(staff_claim.data.claim_number)} 
+                            className="bg-gray-800 cursor-pointer text-white px-3 py-1 rounded hover:bg-gray-700"
+                        >
+                          {isLoading ? <Loader className="h-5 w-5 animate-spin" /> : "Pay"}
+                            
+                        </button>
+                    </div>
+                  ) : "Already Paid"}
                 </td>
                 <td className="px-6 py-4 text-center">
                   <button
@@ -162,8 +176,6 @@ const ClaimSearchAndDisplay = () => {
               </tr>
             </tbody>
           </table>
-          </div>
-          
         </div>
       ) : staff_claim ? (
         <div className="text-center py-8 text-gray-600">No claim details available</div>
