@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Loader, X } from 'lucide-react';
-import Verify_Claim from '../../api/verify_Claim';
+import Verify_Claim from '../../api/Verify_claim';
 import Back from '../../components/Back';
 import { Menu } from "lucide-react";
 import SelectedClaim from '../../components/SelectedClaim';

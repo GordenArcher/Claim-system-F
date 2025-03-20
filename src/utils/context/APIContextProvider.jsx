@@ -9,19 +9,19 @@ import Get_User from "../../api/Get_User"
 export const APIContext = createContext()
 
 const APIContextProvider = ({children}) => {
-
+  const [user, setUser] = useState([])
   const [pendingClaims, setPendingClaims] = useState([])
   const [claimsHistory, setClaimsHistory] = useState([])
   const [paidClaims, setPaidClaims] = useState([])
   const [payHistory, setPayHistory] = useState([])
-  const [user, setUser] = useState([])
+  
 
-
+  const { userData } = Get_User()
   const { data } = Get_pending_claims()
   const { allClaims } = Get_all_claims()
   const { paidData } = Get_paid_claims()
   const { paymentHistory } = Get_Payment_History()
-  const { userData } = Get_User()
+  
   
 
   useEffect(() => {
