@@ -41,18 +41,23 @@ const Pending_claims = () => {
 
     const handleConfirmPayment = async (claim_number, phone_number) => {
         try {
-            await claim_payment(claim_number, phone_number);
-
+          const response = await claim_payment(claim_number, phone_number);
+      
+          if (response?.success) {
             setPendingClaims((prevClaims) => ({
-                ...prevClaims,
-                data: prevClaims.data.filter(claim => claim.claim_number !== claim_number)
+              ...prevClaims,
+              data: prevClaims.data.filter(claim => claim.claim_number !== claim_number)
             }));
-
-            setShowModal(false);
+      
+            
+          }
         } catch (error) {
-            console.error("Payment failed:", error);
+          console.error("Payment failed:", error);
+        }finally{
+            setShowModal(false);
         }
-    };
+      };
+      
 
     return (
         <section className="p-7">
@@ -70,6 +75,7 @@ const Pending_claims = () => {
                                     <th className="px-4 py-2 border">Claim Number</th>
                                     <th className="px-4 py-2 border">Name</th>
                                     <th className="px-4 py-2 border">Amount</th>
+                                    <th className="px-4 py-2 border">Reason</th>
                                     <th className="px-4 py-2 border">Status</th>
                                     <th className="px-4 py-2 border">Action</th>
                                     <th className="px-4 py-2 border">View</th>
@@ -78,12 +84,15 @@ const Pending_claims = () => {
                             <tbody className="divide-y divide-gray-200">
                                 {pendingClaims.data.map((claim) => (
                                     <tr key={claim.claim_number} className="bg-white border-b">
-                                        <td className="px-4 text-center py-2 border">{claim.claim_number}</td>
-                                        <td className="px-4 text-center py-2 border">
+                                        <td className="px-4 py-2 border">{claim.claim_number}</td>
+                                        <td className="px-4 py-2 border">
                                             {claim.staff.employee.first_name} {claim.staff.employee.last_name}
                                         </td>
-                                        <td className="px-4 text-center py-2 border">
+                                        <td className="px-4 py-2 border">
                                             Ghc{Number(claim.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                                        </td>
+                                        <td width={500} className="px-4 py-2 border">
+                                            {claim.claim_reason}
                                         </td>
                                         <td className="px-4 text-center py-2 border">
                                             <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
@@ -150,7 +159,7 @@ const Pending_claims = () => {
                                         onClick={() => handleConfirmPayment(selectedClaim.claim_number, selectedClaim.staff.phone_number)} 
                                         className="bg-green-500 text-white cursor-pointer px-4 py-2 rounded hover:bg-green-600"
                                     >
-                                        {isLoading ? <Loader /> : "Yes, Pay"}
+                                        {isLoading ? <Loader className="animate-spin" /> : "Yes, Pay"}
                                     </button>
                                     <button 
                                         onClick={() => setShowModal(false)} 

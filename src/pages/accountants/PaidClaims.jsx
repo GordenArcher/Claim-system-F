@@ -49,6 +49,7 @@ const PaidClaims = () => {
             <th className="px-4 py-2 border">Claim Number</th>
             <th className="px-4 py-2 border">Name</th>
             <th className="px-4 py-2 border">Amount</th>
+            <th className="px-4 py-2 border">Reason</th>
             <th className="px-4 py-2 border">Status</th>
             <th className="px-4 py-2 border">Action</th>
           </tr>
@@ -56,12 +57,15 @@ const PaidClaims = () => {
         <tbody className="divide-y divide-gray-200">
           {paidClaims.paid_claims.map((claim) => (
             <tr key={claim.claim_number} className="bg-white overflow-auto border-b">
-              <td className="px-4 text-center py-2 border">{claim.claim_number}</td>
-              <td className="px-4 text-center py-2 border">
+              <td className="px-4 py-2 border">{claim.claim_number}</td>
+              <td className="px-4 py-2 border">
                 {claim.staff.employee.first_name} {claim.staff.employee.last_name}
               </td>
-              <td className="px-4 text-center py-2 border">
+              <td className="px-4 py-2 border">
                 Ghc{Number(claim.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+              </td>
+              <td className="px-4 py-2 border">
+                  {claim.staff_claim}
               </td>
               <td className="px-4 text-center py-2 border">
                 <span className={`px-2 py-1 text-xs font-semibold rounded-full ${

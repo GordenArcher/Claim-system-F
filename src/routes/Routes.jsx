@@ -10,46 +10,73 @@ import HistoryClaims from "../pages/accountants/HistoryClaims"
 import PaidClaims from "../pages/accountants/PaidClaims"
 import Settings from "../pages/accountants/Settings"
 import PaymentHistory from "../pages/accountants/PaymentHistory"
-import NewStaffClaim from "../pages/staff/NewStaffClaim"
+import NewStaffClaim from "../pages/administrators/NewStaffClaim"
 import { APIContext } from "../utils/context/APIContextProvider"
+import Blocked from "../pages/Blocked"
+import NavBar from "../layout/NavBar"
+import MainAdminDashboard from "../pages/MainAdmin/MainAdminDashboard"
+import AdminDashboard from "../pages/administrators/AdminDashboard"
+import UserManagement from "../pages/administrators/UserManagement"
 
 const PageRoutes = () => {
-    const { isAuthenticated } = useContext(AuthContext)
-    const { user } = useContext(APIContext)
+  const { isAuthenticated } = useContext(AuthContext)
+  const { user } = useContext(APIContext)
+
+  if (!isAuthenticated) {
+    return (
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    )
+  }
+
+  const role = user?.data?.role;
+
+  if(user?.data?.has_access){
+    return (
+        <Routes>
+            <Route path="/" element={<Blocked />} />
+        </Routes>
+    )
+  }
 
   return (
     <>
+        <NavBar />
+
         <Routes>
-            {isAuthenticated ?
-                (user.data?.role === 'accountant' ? (
-                    <>
-                        {/* These routes are for the Accountant */}
-                        <Route path="/" element={ <Dashboard /> } />
-                        <Route path="/staff/claim/verify" element={ <ClaimVerification /> } />
-                        <Route path="/claims/pending" element={ <Pending_claims /> } />
-                        <Route path="/claims/history" element={ <HistoryClaims /> } />
-                        <Route path="/claims/paid" element={ <PaidClaims /> } />
-                        <Route path="/payments/history" element={ <PaymentHistory /> } />
-                        <Route path="/settings" element={ <Settings /> } />
-                        <Route path="*" element={ <Navigate to={'/'} /> } />
-                    </>
-                ) : (
-                    <>
-                        {/* These routes are for the Staff */}
-                        <Route path="/" element={ <NewStaffClaim /> } />
-                        <Route path="*" element={ <Navigate to={'/'} /> } />
-                    </>
-                ))
-            :
+        {/* Common routes for all roles */}
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/staff/claim/verify" element={<ClaimVerification />} />
+        <Route path="/claims/pending" element={<Pending_claims />} />
+        <Route path="/claims/paid" element={<PaidClaims />} />
+        <Route path="/settings" element={<Settings />} />
+
+        {/* Routes for Administrators and Higher */}
+        {(role === 'administrator' || role === 'main_administrator') && (
             <>
-                <Route path="/" element={ <Login /> } />
-                <Route path="/auth/register/" element={ <Register /> } />
-                <Route path="*" element={ <Navigate to={'/'} />} />
+                <Route path="/payments/history" element={<PaymentHistory />} />
+                <Route path="/staff/claim/new" element={<NewStaffClaim />} />
+                <Route path="/claims/history" element={<HistoryClaims />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/user-management" element={<UserManagement />} />
             </>
-        }
-            
+        )}
+
+        {/* Routes for Main Administrators Only */}
+        {role === 'main_administrator' && (
+            <>
+                <Route path="main-admin/dashboard" element={<MainAdminDashboard />} />
+            </>
+        )}
+
+        {/* Catch-all Redirect */}
+        <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     </>
+    
   )
 }
 

@@ -16,29 +16,27 @@ const ChangePassword = () => {
 
       try {
           const response = await fetch(`${BASE_URL}/profile/change_password/`, {
-              method: "POST",
-              headers: {
-              "Content-Type": "application/json",
-              'X-CSRFToken': localStorage.getItem("csrf"),
-              },
-              body: JSON.stringify({
-                  "old_password": profileData?.currentPassword,
-                  "new_password": profileData?.newPassword,
-                  "new_password2": profileData?.confirmPassword
-              }) ,
-              credentials: "include",
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            'X-CSRFToken': localStorage.getItem("csrf"),
+            },
+            body: JSON.stringify({
+                "old_password": profileData?.currentPassword,
+                "new_password": profileData?.newPassword,
+                "new_password2": profileData?.confirmPassword
+            }) ,
+            credentials: "include",
           })
           console.log(profileData)
   
           if (response.ok){
-              const data = await response.json()
-              toast.success(data.message)
-              console.log(data)
+            const data = await response.json()
+            toast.success(data.message)
           }
           else{
-              const errorData = await response.json()
-              toast.success(errorData.message)
-              console.log(errorData)
+            const errorData = await response.json()
+            toast.error(errorData.message)
           }
       } catch (error) {
           console.log(error)

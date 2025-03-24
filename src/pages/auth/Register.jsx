@@ -1,12 +1,16 @@
 import { Loader } from "lucide-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Typewriter } from "react-simple-typewriter";
 import { toast } from "react-toastify";
+import { APIContext } from "../../utils/context/APIContextProvider";
 
 const Register = () => {
 
   const navigate = useNavigate()
+  const { user } = useContext(APIContext)
+
+    const role = user?.data?.role;
 
   const [registerData, setRegisterData] = useState({
     first_name: "",
@@ -40,7 +44,7 @@ const Register = () => {
           last_name: registerData.last_name,
           email: registerData.email,
           phone_number: registerData.phone_number,
-          role: registerData.role,
+          role: registerData.role || "accountant",
           password: registerData.password,
           password2: registerData.password2,
         }), credentials:"include"})
@@ -64,8 +68,15 @@ const Register = () => {
     }
   };
 
+  const availableRoles = role === 'administrator'
+  ? [{ id: "accountant", label: "Accountant" }]
+  : [
+      { id: "accountant", label: "Accountant" },
+      { id: "administrator", label: "Administrator" }
+    ];
+
   return (
-    <div className="w-full h-screen bg-gradient-to-b from-gray-900 to-gray-700">
+    <div className="w-full">
       <div className="max-w-[600px] m-auto h-screen flex items-center justify-center">
         <section className="w-full bg-white rounded-xl p-6 shadow-lg">
           <h2 className="text-center text-2xl font-bold text-black">
@@ -79,9 +90,6 @@ const Register = () => {
           />
             
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Have an account? <Link to="/" className="text-gray-800 underline">Login</Link>
-          </p>
           <form className="mt-8" onSubmit={registerUser}>
             <div className="space-y-5">
               <div className="grid grid-cols-2 gap-4">
@@ -118,7 +126,7 @@ const Register = () => {
                     value={registerData.email}
                     name="email"
                     onChange={(e) => setRegisterData((prev) => ({ ...prev, email: e.target.value }))}
-                    className={`mt-2 flex h-10 w-full rounded-md border outline-none px-3 py-2 text-sm focus:ring-1border-gray-300`}
+                    className={`mt-2 flex h-10 w-full rounded-md border outline-none px-3 py-2 text-sm focus:ring-1 border-gray-300`}
                   />
                 </div>
 
@@ -135,25 +143,13 @@ const Register = () => {
                 </div>
 
               <div className="flex flex-col gap-3">
-                <p className="text-gray-700 font-medium text-base">Select Your Role</p>
+                <p className="text-gray-700 font-medium text-base">Select Role</p>
                 <div className="flex gap-3">
-                  {[
-                    { id: "accountant", label: "Accountant" },
-                    { id: "staff", label: "Staff" },
-                  ].map((role) => (
-                    <div key={role.id}>
-                      <input
-                        className="peer hidden"
-                        type="radio"
-                        id={role.id}
-                        name="role"
-                        value={role.id}
-                      />
-                      <label
-                        htmlFor={role.id}
-                        className="flex cursor-pointer items-center justify-center rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 transition-all duration-200 hover:border-gray-400 hover:text-gray-500 peer-checked:border-gray-500 peer-checked:bg-gray-500 peer-checked:text-white"
-                      >
-                        {role.label}
+                {availableRoles.map((roleOption) => (
+                    <div key={roleOption.id}>
+                      <input className="peer hidden" type="radio" id={roleOption.id} name="role" value={roleOption.id} onChange={(e) => setRegisterData((prev) => ({ ...prev, role: e.target.value }))} />
+                      <label htmlFor={roleOption.id} className="flex cursor-pointer items-center justify-center rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 peer-checked:border-gray-500 peer-checked:bg-gray-500 peer-checked:text-white">
+                        {roleOption.label}
                       </label>
                     </div>
                   ))}
@@ -168,7 +164,7 @@ const Register = () => {
                     name="password"
                     value={registerData.password}
                     onChange={(e) => setRegisterData((prev) => ({ ...prev, password: e.target.value }))}
-                    className="mt-2 flex h-10 w-full rounded-md border outline-none px-3 py-2 text-sm focus:ring-1border-gray-300"
+                    className="mt-2 flex h-10 w-full rounded-md border outline-none px-3 py-2 text-sm focus:ring-1 border-gray-300"
                   />
                 </div>
 
@@ -180,7 +176,7 @@ const Register = () => {
                     name="password2"
                     value={registerData.password2}
                     onChange={(e) => setRegisterData((prev) => ({ ...prev, password2: e.target.value }))}
-                    className="mt-2 flex h-10 w-full rounded-md border outline-none px-3 py-2 text-sm focus:ring-1border-gray-300"
+                    className="mt-2 flex h-10 w-full rounded-md border outline-none px-3 py-2 text-sm focus:ring-1 border-gray-300"
                   />
                 </div>
 
@@ -192,7 +188,7 @@ const Register = () => {
                   isSubmitting ? "bg-gray-500 cursor-not-allowed" : "bg-black hover:bg-gray-800"
                 }`}
               >
-                {isSubmitting ? <div className="flex items-center justify-center"><Loader className="animate-spin" /></div> : "Register"}
+                {isSubmitting ? <div className="flex items-center justify-center"><Loader className="animate-spin" /> Registering...</div> : "Register"}
               </button>
               </div>
             </div>

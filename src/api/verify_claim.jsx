@@ -30,8 +30,8 @@ const Verify_Claim = () => {
         setStaff_claim(data);
       } else {
 
-      const errorData = await response.json();
-      const errorMessage = typeof errorData === 'string' ? errorData : errorData.detail || errorData.message || "Failed to retrieve claim information";
+        const errorData = await response.json();
+        const errorMessage = typeof errorData === 'string' ? errorData : errorData.detail || errorData.message || "Failed to retrieve claim information";
         setError(errorMessage);
         toast.error(errorMessage);
       }

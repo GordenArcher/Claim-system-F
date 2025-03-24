@@ -19,15 +19,15 @@ const SelectedClaim = ({ selectedClaim, formatDate, closeModal }) => {
         >
             <h2 className="text-lg font-semibold mb-4">Claim Details</h2>
             <p><strong>Claim Number:</strong> {selectedClaim.claim_number}</p>
-            <p><strong>Amount:</strong> ${Number(selectedClaim.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}</p>
+            <p><strong>Amount:</strong> GHc{Number(selectedClaim.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}</p>
             <p><strong>Status:</strong> {selectedClaim.status}</p>
             <p><strong>Name:</strong> {selectedClaim.staff.employee.first_name} {selectedClaim.staff.employee.last_name}</p>
             <p><strong>Staff ID:</strong> {selectedClaim.staff.staff_id}</p>
             <p><strong>Phone:</strong> {selectedClaim.staff.phone_number}</p>
             <p><strong>Email:</strong> {selectedClaim.staff.employee.email || "Not provided"}</p>
-            <p><strong>Date:</strong> {formatDate(selectedClaim.created_at)}</p>
+            <p><strong>Date Created:</strong> {formatDate(selectedClaim.created_at)}</p>
             <p><strong>Reason:</strong> {selectedClaim.claim_reason}</p>
-            <p><strong>Date Paid:</strong> {formatDate(selectedClaim.payment_date)}</p>
+            <p><strong>Date Paid:</strong> {selectedClaim.payment_date ? formatDate(selectedClaim.payment_date) : 'Not Paid Yet'}</p>
             <button
             onClick={closeModal}
             className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full"

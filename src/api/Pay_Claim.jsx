@@ -10,7 +10,7 @@ const PayClaim = () => {
         setIsLoading(true)
 
         try {
-            const response = await fetch(`${BASE_URL}/claim/staff/pay/${claim_number}`, {
+            const response = await fetch(`${BASE_URL}/claim/staff/pay/${claim_number}/`, {
                 method: "POST",
                 headers: {
                 "Content-Type": "application/json",
@@ -22,12 +22,10 @@ const PayClaim = () => {
             if (response.ok){
                 const data = await response.json()
                 toast.success(data.message)
-                console.log(data)
             }
             else{
                 const errorData = await response.json()
-                toast.success(errorData.message)
-                console.log(errorData)
+                toast.error(errorData.message)
             }
         } catch (error) {
             console.log(error)

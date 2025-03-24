@@ -1,37 +1,89 @@
 export const ClaimsNav = [
     {
-        title: "Dashboard",
-        path: "/dashboard",
-        icon: "layout-dashboard",
+      title: "Claim Lookup",
+      path: "/staff/claim/verify/",
+      icon: "search",
+      roles: ["accountant", "administrator", "main_administrator"],
     },
     {
-        title: "Claim Lookup",
-        path: "/staff/claim/verify/",
-        icon: "search",
+      title: "Pending Claims",
+      path: "/claims/pending",
+      icon: "clock",
+      roles: ["accountant", "administrator", "main_administrator"],
     },
     {
-        title: "Payment History",
-        path: "/payments/history",
-        icon: "credit-card",
+      title: "Paid Claims",
+      path: "/claims/paid",
+      icon: "dollar-sign",
+      roles: ["accountant", "administrator", "main_administrator"],
     },
     {
-        title: "Pending Claims",
-        path: "/claims/pending",
-        icon: "clock",
+      title: "Settings",
+      path: "/settings",
+      icon: "settings",
+      roles: ["accountant", "administrator", "main_administrator"],
     },
+    // Admin Routes
     {
-        title: "Paid Claims",
-        path: "/claims/paid",
-        icon: "dollar-sign",
+      title: "Admin Dashboard",
+      path: "/admin/dashboard",
+      icon: "layout-dashboard",
+      roles: ["administrator", "main_administrator"],
     },
     {
         title: "Claim History",
         path: "/claims/history",
         icon: "history",
+        roles: ["administrator", "main_administrator"],
+      },
+    {
+        title: "Payment History",
+        path: "/payments/history",
+        icon: "credit-card",
+        roles: ["administrator", "main_administrator"],
+      },
+    {
+      title: "User Management",
+      path: "/admin/user-management",
+      icon: "users",
+      roles: ["administrator", "main_administrator"],
     },
     {
-        title: "Settings",
-        path: "/settings",
-        icon: "settings",
+      title: "Approve Claims",
+      path: "/admin/approve",
+      icon: "file-text",
+      roles: ["administrator", "main_administrator"],
     },
-];
+    {
+      title: "System Logs",
+      path: "/admin/system-logs",
+      icon: "clipboard-list",
+      roles: ["administrator", "main_administrator"],
+    },
+    // Main Administrator Only
+    {
+      title: "Main Admin Dashboard",
+      path: "/main-admin/dashboard",
+      icon: "layout-dashboard",
+      roles: ["main_administrator"],
+    },
+    {
+      title: "Audit Trail",
+      path: "/main-admin/audit-trail",
+      icon: "search-check",
+      roles: ["main_administrator"],
+    },
+    {
+      title: "Analytics",
+      path: "/main-admin/analytics",
+      icon: "bar-chart",
+      roles: ["main_administrator"],
+    },
+    {
+      title: "Account Settings",
+      path: "/main-admin/account-settings",
+      icon: "settings",
+      roles: ["main_administrator"],
+    },
+  ];
+  

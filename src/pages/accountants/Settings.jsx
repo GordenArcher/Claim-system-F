@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import Back from "../../components/Back";
-import { Loader, User, Lock, Shield, Save, Copy } from 'lucide-react';
+import { Loader, User, Lock, Shield, Save, Copy, Bell } from 'lucide-react';
 import { toast } from "react-toastify";
 import { APIContext } from "../../utils/context/APIContextProvider";
 import ChangeProfile from "../../api/ChangeProfile";
@@ -11,7 +11,7 @@ const Settings = () => {
   const { user } = useContext(APIContext);
   
   const [activeTab, setActiveTab] = useState("profile");
-//   const [notifications, setNotifications] = useState(true);
+  const [notifications, setNotifications] = useState(true);
   
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -46,20 +46,13 @@ const Settings = () => {
       [e.target.name]: e.target.value
     });
   };
-  
-  const handleProfileChange = (e) => {
-    setProfileData({
-      ...profileData,
-      [e.target.name]: e.target.value
-    });
-  };
 
   const { isChangingPassword, change_password } = ChangePassword()
 
 
-//   const toggleNotifications = () => {
-//     setNotifications(!notifications);
-//   };
+  const toggleNotifications = () => {
+    setNotifications(!notifications);
+  };
 
   const copy_staffID = () => {
     navigator.clipboard.writeText(user.data.staff_id);
@@ -85,10 +78,10 @@ const Settings = () => {
                         <span>Security</span>
                     </button>
                     
-                    {/* <button onClick={() => setActiveTab("notifications")} className={`flex cursor-pointer items-center gap-2 w-full px-4 py-2 rounded-md text-left ${activeTab === "notifications" ? "bg-gray-100 font-medium" : "hover:bg-gray-50"}`}>
+                    <button onClick={() => setActiveTab("notifications")} className={`flex cursor-pointer items-center gap-2 w-full px-4 py-2 rounded-md text-left ${activeTab === "notifications" ? "bg-gray-100 font-medium" : "hover:bg-gray-50"}`}>
                         <Bell size={18} />
                         <span>Notifications</span>
-                    </button> */}
+                    </button>
                     
                 </div>
             
@@ -109,7 +102,7 @@ const Settings = () => {
                                     type="text"
                                     name="first_name"
                                     value={profileData.firstName}
-                                    onChange={handleProfileChange}
+                                    onChange={(e) => setProfileData((prevData) => ({...prevData, firstName: e.target.value}))}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none "
                                     />
                                 </div>
@@ -119,7 +112,7 @@ const Settings = () => {
                                     type="text"
                                     name="last_name"
                                     value={profileData.lastName}
-                                    onChange={handleProfileChange}
+                                    onChange={(e) => setProfileData((prevData) => ({...prevData, lastName: e.target.value}))}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none "
                                     />
                                 </div>
@@ -129,7 +122,7 @@ const Settings = () => {
                                     type="email"
                                     name="email"
                                     value={profileData.email}
-                                    onChange={handleProfileChange}
+                                    onChange={(e) => setProfileData((prevData) => ({...prevData, email: e.target.value}))}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none "
                                     />
                                 </div>
@@ -139,7 +132,7 @@ const Settings = () => {
                                     type="tel"
                                     name="phone_number"
                                     value={profileData.phoneNumber}
-                                    onChange={handleProfileChange}
+                                    onChange={(e) => setProfileData((prevData) => ({...prevData, phoneNumber: e.target.value}))}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none "
                                     />
                                 </div>
@@ -151,7 +144,6 @@ const Settings = () => {
                                         type="text"
                                         disabled
                                         value={user.data.staff_id}
-                                        onChange={handleProfileChange}
                                         className="w-full px-3 py-2 focus:outline-none"
                                         />
                                         <button type="button" onClick={copy_staffID} className="p-3 cursor-pointer hover:bg-gray-300 rounded-xl">
@@ -250,7 +242,7 @@ const Settings = () => {
                     </div>
                 )}
                 
-                {/* {activeTab === "notifications" && (
+                {activeTab === "notifications" && (
                     <div>
                         <h2 className="text-xl font-semibold mb-4">Notification Settings</h2>
                         <div className="space-y-4">
@@ -291,7 +283,7 @@ const Settings = () => {
                             </div>
                         </div>
                     </div>
-                )} */}
+                )}
             </div>
         </div>
     </div>

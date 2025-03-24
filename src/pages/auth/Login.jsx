@@ -4,10 +4,13 @@ import { toast } from "react-toastify";
 import { AuthContext } from "../../utils/context/AuthContextProvider";
 import { Loader } from "lucide-react";
 import { Typewriter } from "react-simple-typewriter";
+import { motion } from 'framer-motion'
 
 const Login = () => {
 
   const {setIsAuthenticated} = useContext(AuthContext)
+
+  const [showResetPopUp, setShowResetPopUp] = useState(false)
 
   const [isLoading, setIsLoading] = useState(false)
   const [loginData, setLoginData] = useState({
@@ -60,7 +63,7 @@ const Login = () => {
               <div className="mb-2 flex justify-center"></div>
               <h2 className="text-center text-2xl font-bold leading-tight text-black">
               <Typewriter
-                  words={['Sign in']}
+                  words={['Sign in as an accountant']}
                   loop={true}
                   cursor
                   cursorStyle="."
@@ -68,9 +71,6 @@ const Login = () => {
                   deleteSpeed={70}
                 />
               </h2>
-              <p className="mt-2 text-center text-sm text-gray-600">
-                Don't have an account? <Link className="text-gray-800 underline" to={'/auth/register'}>Create one </Link>
-              </p>
               <form className="mt-8" onSubmit={logUserIn}>
                 <div className="space-y-9">
                   <div>
@@ -96,6 +96,7 @@ const Login = () => {
                       <Link
                         className="text-sm font-semibold text-black hover:underline"
                         title="password reset"
+                        onClick={() => setShowResetPopUp((prevState) => !prevState )}
                         to="#">
                         Forgot password?
                       </Link>
@@ -112,7 +113,7 @@ const Login = () => {
                   </div>
                   <div>
                     <button disabled={isLoading} className="inline-flex outline-none cursor-pointer w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80" type="submit">
-                      {isLoading ? <Loader className="animate-spin" /> : "Log in"}
+                      {isLoading ? (<div className="flex items-center gap-0.5"><Loader className="animate-spin" /> Please wait...</div>) : "Log in"}
                     </button>
                   </div>
                 </div>
@@ -123,6 +124,29 @@ const Login = () => {
           </div>
         </section>
       </div>
+
+      {showResetPopUp && (
+        <>
+          <motion.div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={setShowResetPopUp(false)}
+          />
+          <motion.div
+            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-lg z-50 w-96"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}>
+            <div className="p-4">
+              <h3>Please reach out to the System Administrator to reset your password</h3>
+            </div>
+          </motion.div>
+        </>
+      )
+      }
+
     </div>
     
   )
