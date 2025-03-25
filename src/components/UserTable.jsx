@@ -1,12 +1,28 @@
 import { useCallback, useContext, useState } from "react";
 import { APIContext } from "../utils/context/APIContextProvider";
 import UserTableSkeleton from "./UserTableSkeleton";
-import { Loader, Trash2, Lock, Unlock , CheckCircle, RefreshCcw, Search } from 'lucide-react';
+import { Loader, Trash2, Lock, Unlock , PenIcon, RefreshCcw, Search } from 'lucide-react';
+import UnBlockUser from "../api/Un_blockUser";
 
 const UserTable = ({ onBlockUser, onDeleteUser, confirmAction, isBlocking, isDeletingUser }) => {
   const { user, allUsers, isGettingUsers, setAllUsers } = useContext(APIContext);
-  
+  const { handleUnBlockUser, isUnBlocking } = UnBlockUser()
+
   const [searchQuery, setSearchQuery] = useState("");
+
+  const unblockuser = useCallback( async (userId) => {
+      try {
+        const response = await handleUnBlockUser(userId)
+
+        if(response){
+            console.log(response)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    [handleUnBlockUser],
+  )
 
   const handleBlockUser = async (userId) => {
     await onBlockUser(userId);
@@ -117,52 +133,60 @@ const UserTable = ({ onBlockUser, onDeleteUser, confirmAction, isBlocking, isDel
             <UserTableSkeleton />
           ) : (
             <tbody>
-              {filteredUsers?.filter((u) => user.data?.role !== 'administrator' || u.role !== 'administrator')
+              {filteredUsers?.filter((u) => u.role !== "main_administrator" || user.data.role !== "administrator")
                 .map((user) => (
-                  <tr key={user.staff_id} className="border-b hover:bg-gray-50">
-                    <td className="p-4 text-gray-700">{user.employee.first_name}</td>
-                    <td className="p-4 text-gray-700">{user.employee.last_name}</td>
-                    <td className="p-4 text-gray-700">{user.employee.email}</td>
-                    <td className="p-4 text-gray-700">{user.phone_number}</td>
-                    <td className="p-4 text-gray-700">{user.staff_id}</td>
-                    <td className="p-4 text-gray-700 capitalize">{user.role}</td>
-                    <td className="p-4 flex gap-2">
-                      <button
-                        onClick={() => handleBlockUser(user.staff_id)}
-                        className={`p-2 text-white cursor-pointer rounded-lg flex items-center gap-2 transition-all ${isBlocking || isDeletingUser ? 'bg-yellow-300' : 'bg-yellow-500 hover:bg-yellow-600'}`}
-                        disabled={user.is_blocked}
-                      >
+                  <tr key={user.staff_id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.employee.first_name}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.employee.last_name}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.employee.email}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.phone_number}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.staff_id}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600 capitalize">{user.role}</td>
+                    <td className="p-4 flex gap-2 px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">
+                    
                         {user.is_blocked ? (
-                          <div className="flex items-center gap-1">
-                            <Unlock className="h-4 w-4" /> 
-                            <span>UnBlocked</span>
-                          </div>
+                          <button onClick={() => unblockuser(user.staff_id)} className="p-2 cursor-pointer flex items-center gap-2 transition-all text-red-500">
+                            <div className="flex items-center gap-1">
+                                {isUnBlocking ? (
+                                    <Loader className="animate-spin" />
+                                ) : (
+                                    <>
+                                        <Unlock className="h-4 w-4" /> 
+                                        <span>UnBlocked</span>
+                                    </>
+                                )}
+                            </div>
+                          </button>
                         ) : (
                           <div>
                             {isBlocking && confirmAction?.userId === user.staff_id && confirmAction?.type === 'block' ? 
                               <Loader className="animate-spin h-4 w-4" /> : 
-                              <div className="flex items-center gap-1">
-                                <Lock className="h-4 w-4" /> 
-                                <span>Block</span>
-                              </div>
+                              <button onClick={() => handleBlockUser(user.staff_id)} className="p-2 cursor-pointer flex items-center gap-2 transition-all text-red-500 hover:text-red-600">
+                                <div className="flex items-center gap-1">
+                                    <Lock className="h-4 w-4" /> 
+                                    <span>Block</span>
+                                </div>
+                              </button>
                             }
                           </div>
                         )}
-                      </button>
 
-                      <button
-                        onClick={() => handleDeleteUser(user.staff_id)}
-                        className={`p-2 text-white rounded-lg flex items-center gap-2 transition-all ${isBlocking || isDeletingUser ? 'bg-red-300' : 'bg-red-500 hover:bg-red-600'}`}
-                        disabled={isDeletingUser}
-                      >
-                        {isDeletingUser && confirmAction?.userId === user.staff_id && confirmAction?.type === 'delete' ? 
-                          <Loader className="animate-spin h-4 w-4" /> : 
-                          <Trash2 className="h-4 w-4" />} Delete
-                      </button>
+                        <button
+                            onClick={() => handleDeleteUser(user.staff_id)}
+                            className={`p-2 cursor-pointer flex items-center gap-2 transition-all text-red-500 hover:text-red-600`}
+                            disabled={isDeletingUser}
+                        >
+                            {isDeletingUser && confirmAction?.userId === user.staff_id && confirmAction?.type === 'delete' ? 
+                            <Loader className="animate-spin h-4 w-4" /> : 
+                            <Trash2 className="h-4 w-4" />} Delete
+                        </button>
 
-                      <button>
-                        Edit
-                      </button>
+                        <button className="p-2 cursor-pointer flex items-center gap-2 transition-all text-green-500 hover:text-green-600">
+                            <div className="flex items-center gap-1">
+                                <PenIcon className="h-4 w-4" /> 
+                                <span>Edit</span>
+                            </div>
+                        </button>
                     </td>
                   </tr>
                 ))}

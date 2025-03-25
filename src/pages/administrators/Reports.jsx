@@ -1,19 +1,13 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { Calendar, Filter, Download, RefreshCw } from 'lucide-react';
+import ProcessingTime from './ProcessingTime';
+import Get_processingData from '../../api/Get_processingData';
+import Get_PaymentData from '../../api/Get_PaymentData';
 
 export default function ClaimsReportsTab() {
   const [selectedReport, setSelectedReport] = useState('totalPayments');
-  const [dateRange, setDateRange] = useState('thisMonth');
-  
-  const paymentData = [
-    { month: 'Jan', amount: 145000 },
-    { month: 'Feb', amount: 162000 },
-    { month: 'Mar', amount: 178000 },
-    { month: 'Apr', amount: 191000 },
-    { month: 'May', amount: 185000 },
-    { month: 'Jun', amount: 195000 }
-  ];
+
   
   const statusData = [
     { name: 'Approved', value: 65 },
@@ -22,25 +16,40 @@ export default function ClaimsReportsTab() {
     { name: 'Under Review', value: 5 }
   ];
   
-  const processingTimeData = [
-    { day: 'Mon', time: 3.2 },
-    { day: 'Tue', time: 2.8 },
-    { day: 'Wed', time: 3.5 },
-    { day: 'Thu', time: 2.9 },
-    { day: 'Fri', time: 3.7 }
-  ];
+  const {getProcessingTimeData } = Get_processingData()
+  const { getPaymentData, paymentData } = Get_PaymentData()
+
+
+  useEffect(() => {
+    getPaymentData();
+  }, [getPaymentData]);
+
+  const [isLoading, setIsLoading] = useState(false)
+
+  const refreshDatas = useCallback( async () => {
+    setIsLoading(true)
+    try {
+      await getPaymentData();
+      await getProcessingTimeData()
+    } catch (error) {
+      console.log(error)
+    }finally{
+      setIsLoading(false)
+    }
+      
+  }, [getProcessingTimeData, getPaymentData])
   
   const COLORS = ['#0088FE', '#FF8042', '#FF0000', '#FFBB28'];
   
   const formatCurrency = (value) => {
-    return `$${value.toLocaleString()}`;
+    return `₵${value.toLocaleString()}`;
   };
   
   const renderReport = () => {
     switch (selectedReport) {
       case 'totalPayments':
         return (
-          <div className="p-4 bg-gray-50 rounded-lg">
+          <div className="p-4 w-full bg-gray-50 rounded-lg">
             <h3 className="text-lg font-semibold mb-4">Total Payments Made</h3>
             <BarChart width={600} height={300} data={paymentData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -52,15 +61,15 @@ export default function ClaimsReportsTab() {
             </BarChart>
             <div className="mt-4 text-sm text-gray-600">
               <p className="font-medium">Summary:</p>
-              <p>Total Payments: {formatCurrency(paymentData.reduce((sum, item) => sum + item.amount, 0))}</p>
-              <p>Average Monthly Payment: {formatCurrency(paymentData.reduce((sum, item) => sum + item.amount, 0) / paymentData.length)}</p>
-              <p>Highest Month: {paymentData.reduce((max, item) => item.amount > max.amount ? item : max, paymentData[0]).month}</p>
+              <p>Total Payments: {formatCurrency(paymentData?.reduce((sum, item) => sum + (item?.amount || 0), 0))}</p>
+              <p>Average Monthly Payment: {paymentData?.length > 0 ? formatCurrency(paymentData.reduce((sum, item) => sum + (item?.amount || 0), 0) / paymentData.length) : 'N/A'}</p>
+              <p>Highest Month: {paymentData?.length > 0 ? paymentData.reduce((max, item) => (item?.amount || 0) > (max?.amount || 0) ? item : max, paymentData[0])?.month : 'N/A'}</p>
             </div>
           </div>
         );
       case 'claimStatus':
         return (
-          <div className="p-4 bg-gray-50 rounded-lg">
+          <div className="p-4 w-full bg-gray-50 rounded-lg">
             <h3 className="text-lg font-semibold mb-4">Claims by Status</h3>
             <div className="flex items-center justify-center">
               <PieChart width={400} height={300}>
@@ -81,7 +90,7 @@ export default function ClaimsReportsTab() {
                 <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
               </PieChart>
             </div>
-            <div className="mt-4 text-sm text-gray-600">
+            <div className="mt-4 w-full text-sm text-gray-600">
               <p className="font-medium">Summary:</p>
               <p>Total Claims: 500</p>
               <p>Approval Rate: 65%</p>
@@ -91,23 +100,7 @@ export default function ClaimsReportsTab() {
         );
       case 'processingTime':
         return (
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4">Average Processing Time (Days)</h3>
-            <LineChart width={600} height={300} data={processingTimeData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip formatter={(value) => [`${value} days`, 'Processing Time']} />
-              <Legend />
-              <Line type="monotone" dataKey="time" name="Average Processing Time" stroke="#8884d8" activeDot={{ r: 8 }} />
-            </LineChart>
-            <div className="mt-4 text-sm text-gray-600">
-              <p className="font-medium">Summary:</p>
-              <p>Average Processing Time: {(processingTimeData.reduce((sum, item) => sum + item.time, 0) / processingTimeData.length).toFixed(1)} days</p>
-              <p>Fastest Day: {processingTimeData.reduce((min, item) => item.time < min.time ? item : min, processingTimeData[0]).day} ({processingTimeData.reduce((min, item) => item.time < min.time ? item : min, processingTimeData[0]).time} days)</p>
-              <p>Slowest Day: {processingTimeData.reduce((max, item) => item.time > max.time ? item : max, processingTimeData[0]).day} ({processingTimeData.reduce((max, item) => item.time > max.time ? item : max, processingTimeData[0]).time} days)</p>
-            </div>
-          </div>
+          <ProcessingTime />
         );
       default:
         return <div>Select a report to view</div>;
@@ -122,7 +115,7 @@ export default function ClaimsReportsTab() {
           <div className="flex space-x-2">
             <button className="flex items-center px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
               <Calendar className="h-4 w-4 mr-2" />
-              {dateRange === 'thisMonth' ? 'This Month' : 'Custom Range'}
+              This Month
             </button>
             <button className="flex items-center px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
               <Filter className="h-4 w-4 mr-2" />
@@ -132,9 +125,19 @@ export default function ClaimsReportsTab() {
               <Download className="h-4 w-4 mr-2" />
               Export
             </button>
-            <button className="flex items-center px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
+            <button onClick={refreshDatas} className="flex items-center px-3 py-2 cursor-pointer bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+              {isLoading ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  <span>Refreshing...</span>
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Refresh
+                </>
+              )}
+              
             </button>
           </div>
         </div>

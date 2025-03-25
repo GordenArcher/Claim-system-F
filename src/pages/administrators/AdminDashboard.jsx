@@ -4,12 +4,10 @@ import {
   CheckCircle, 
   XCircle, 
   Clock, 
-  AlertTriangle, 
   Filter, 
   Search, 
   PieChart,
   BarChart,
-  Calendar,
   CheckCheck,
   User
 } from 'lucide-react';
@@ -18,19 +16,12 @@ import { APIContext } from '../../utils/context/APIContextProvider';
 import ClaimsReportsTab from './Reports';
 import SelectedClaim from '../../components/SelectedClaim';
 import { AnimatePresence } from 'framer-motion';
+import ProcessingTime from './ProcessingTime';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [filterOpen, setFilterOpen] = useState(false);
-  const { claimsHistory, RecentClaims, pendingClaims  } = useContext(APIContext)
-
-  const claimsStats = {
-    total: 142,
-    pending: 37,
-    approved: 76,
-    rejected: 18,
-    flagged: 11
-  };
+  const { claimsHistory, RecentClaims, reportSummery  } = useContext(APIContext)
 
   const getStatusIcon = (status) => {
     switch(status) {
@@ -115,8 +106,8 @@ const AdminDashboard = () => {
         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-sm text-gray-500">Pending</p>
-              <h3 className="text-2xl font-bold text-yellow-600">{pendingClaims.total_pending_claims}</h3>
+              <p className="text-sm text-gray-500">Pending Claims</p>
+              <h3 className="text-2xl font-bold text-yellow-600">{reportSummery.pending_count}</h3>
             </div>
             <div className="p-2 bg-yellow-100 rounded-md">
               <Clock className="h-5 w-5 text-yellow-600" />
@@ -125,24 +116,12 @@ const AdminDashboard = () => {
           <p className="text-xs text-gray-500 mt-2">Avg. processing time: 4.2 days</p>
         </div>
         
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-sm text-gray-500">Approved</p>
-              <h3 className="text-2xl font-bold text-green-600">{claimsStats.approved}</h3>
-            </div>
-            <div className="p-2 bg-green-100 rounded-md">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-            </div>
-          </div>
-          <p className="text-xs text-gray-500 mt-2">Approval rate: 63.8%</p>
-        </div>
         
         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-gray-500">Rejected</p>
-              <h3 className="text-2xl font-bold text-red-600">{claimsStats.rejected}</h3>
+              <h3 className="text-2xl font-bold text-red-600">{}</h3>
             </div>
             <div className="p-2 bg-red-100 rounded-md">
               <XCircle className="h-5 w-5 text-red-600" />
@@ -150,6 +129,72 @@ const AdminDashboard = () => {
           </div>
           <p className="text-xs text-gray-500 mt-2">Rejection rate: 15.1%</p>
         </div>
+
+        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+        <div className="flex justify-between items-start">
+          <div>
+            <p className="text-sm text-gray-500">Total Payments</p>
+            <h3 className="text-2xl font-bold text-gray-800">{reportSummery.total_payments}</h3>
+          </div>
+          <div className="p-2 bg-gray-100 rounded-md">
+            <FileText className="h-5 w-5 text-gray-600" />
+          </div>
+        </div>
+        <p className="text-xs text-gray-500 mt-2">+0% from last month</p>
+      </div>
+
+      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+        <div className="flex justify-between items-start">
+          <div>
+            <p className="text-sm text-gray-500">Approved Claims</p>
+            <h3 className="text-2xl font-bold text-green-600">{reportSummery.approved_count}</h3>
+          </div>
+          <div className="p-2 bg-green-100 rounded-md">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+          </div>
+        </div>
+        <p className="text-xs text-gray-500 mt-2">Approval rate: {reportSummery.approval_rate}%</p>
+      </div>
+
+      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+        <div className="flex justify-between items-start">
+          <div>
+            <p className="text-sm text-gray-500">Paid Claims</p>
+            <h3 className="text-2xl font-bold text-blue-600">{reportSummery.paid_count}</h3>
+          </div>
+          <div className="p-2 bg-blue-100 rounded-md">
+            <CheckCircle className="h-5 w-5 text-blue-600" />
+          </div>
+        </div>
+        <p className="text-xs text-gray-500 mt-2">Payment rate: {reportSummery.payment_rate}%</p>
+      </div>
+
+      {/* Total Amount Paid */}
+      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+        <div className="flex justify-between items-start">
+          <div>
+            <p className="text-sm text-gray-500">Total Amount Paid</p>
+            <h3 className="text-2xl font-bold text-gray-800">Gh&#x20B5; {reportSummery.total_amount_paid.toLocaleString()}</h3>
+          </div>
+          <div className="p-2 bg-gray-100 rounded-md">
+            <FileText className="h-5 w-5 text-gray-600" />
+          </div>
+        </div>
+        <p className="text-xs text-gray-500 mt-2">+0% from last month</p>
+      </div>
+
+      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+        <div className="flex justify-between items-start">
+          <div>
+            <p className="text-sm text-gray-500">Avg Claim Amount</p>
+            <h3 className="text-2xl font-bold text-gray-800">Gh&#x20B5; {reportSummery.avg_claim_amount.toLocaleString()}</h3>
+          </div>
+          <div className="p-2 bg-gray-100 rounded-md">
+            <FileText className="h-5 w-5 text-gray-600" />
+          </div>
+        </div>
+        <p className="text-xs text-gray-500 mt-2">Based on recent claims</p>
+      </div>
       </div>
 
       <div className="flex border-b mb-6">
@@ -234,34 +279,38 @@ const AdminDashboard = () => {
                     </thead>
 
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {RecentClaims?.data.map((claim, index) => (
-                            <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{claim.claim_number}</td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
-                                {claim.staff?.employee?.first_name} {claim.staff?.employee?.last_name}
-                            </td>
-                            <td width={500} className="px-2 py-3 whitespace-nowrap text-sm text-gray-800">{claim.claim_reason}</td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${claim.amount}</td>
-                            <td className="px-4 py-3 whitespace-nowrap">
-                                <span className={`px-2 py-1 text-xs rounded-full ${getStatusClass(claim.status)}`}>
-                                    <span className="flex items-center gap-1">
-                                        {getStatusIcon(claim.status)}
-                                        {claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}
+                        {RecentClaims.data.length > 0 ? (
+                            (RecentClaims?.data.map((claim, index) => (
+                                <tr key={index} className="hover:bg-gray-50">
+                                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{claim.claim_number}</td>
+                                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
+                                    {claim.staff?.employee?.first_name} {claim.staff?.employee?.last_name}
+                                </td>
+                                <td width={500} className="px-2 py-3 whitespace-nowrap text-sm text-gray-800">{claim.claim_reason}</td>
+                                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800">&#x20B5;{claim.amount}</td>
+                                <td className="px-4 py-3 whitespace-nowrap">
+                                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusClass(claim.status)}`}>
+                                        <span className="flex items-center gap-1">
+                                            {getStatusIcon(claim.status)}
+                                            {claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}
+                                        </span>
                                     </span>
-                                </span>
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                                {new Date(claim.payment_date).toLocaleDateString()}
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm">
-                                <div className="flex gap-1">
-                                    <button onClick={() => openModal(claim)} className="text-gray-600 cursor-pointer hover:text-gray-800">View</button>
-                                        <span className="text-gray-300">|</span>
-                                    <button className="text-gray-600 hover:text-gray-800">Edit</button>
-                                </div>
-                            </td>
-                            </tr>
-                        ))}
+                                </td>
+                                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                    {new Date(claim.payment_date).toLocaleDateString()}
+                                </td>
+                                <td className="px-4 py-3 whitespace-nowrap text-sm">
+                                    <div className="flex gap-1">
+                                        <button onClick={() => openModal(claim)} className="text-gray-600 cursor-pointer hover:text-gray-800">View</button>
+                                            <span className="text-gray-300">|</span>
+                                        <button className="text-gray-600 hover:text-gray-800">Edit</button>
+                                    </div>
+                                </td>
+                                </tr>
+                            )))
+                        ) : (
+                            <div className='text-center'>No Recent Claims</div>
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -367,20 +416,8 @@ const AdminDashboard = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="font-semibold text-gray-800">Processing Time</h2>
-                <select className="text-xs border rounded p-1">
-                  <option>Last 30 Days</option>
-                  <option>Last 3 Months</option>
-                  <option>Last 6 Months</option>
-                  <option>Last Year</option>
-                </select>
-              </div>
-              <div className="flex items-center justify-center">
-                <BarChart className="h-32 w-full text-gray-500 opacity-75" />
-              </div>
-              <p className="text-sm text-center text-gray-500 mt-2">Average: 4.2 days</p>
+            <div className="bg-white relative rounded-lg shadow-sm border border-gray-200 p-4">
+              <ProcessingTime />
             </div>
           </div>
         </div>
@@ -425,7 +462,7 @@ const AdminDashboard = () => {
                         {claim.staff?.employee?.first_name} {claim.staff?.employee?.last_name}
                       </td>
                       <td width={500} className="px-2 py-3 whitespace-nowrap text-sm text-gray-800">{claim.claim_reason}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${claim.amount}</td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800">&#x20B5;{claim.amount}</td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <span className={`px-2 py-1 text-xs rounded-full ${getStatusClass(claim.status)}`}>
                           <span className="flex items-center gap-1">

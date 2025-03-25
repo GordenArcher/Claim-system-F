@@ -4,14 +4,13 @@ import { Loader, User, Lock, Shield, Save, Copy, Bell } from 'lucide-react';
 import { toast } from "react-toastify";
 import { APIContext } from "../../utils/context/APIContextProvider";
 import ChangeProfile from "../../api/ChangeProfile";
-import LogoutButton from "../../components/LogoutButton";
 import ChangePassword from "../../api/ChangePassword";
 
 const Settings = () => {
   const { user } = useContext(APIContext);
   
   const [activeTab, setActiveTab] = useState("profile");
-  const [notifications, setNotifications] = useState(true);
+//   const [notifications, setNotifications] = useState(true);
   
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -50,9 +49,9 @@ const Settings = () => {
   const { isChangingPassword, change_password } = ChangePassword()
 
 
-  const toggleNotifications = () => {
-    setNotifications(!notifications);
-  };
+//   const toggleNotifications = () => {
+//     setNotifications(!notifications);
+//   };
 
   const copy_staffID = () => {
     navigator.clipboard.writeText(user.data.staff_id);
@@ -78,15 +77,11 @@ const Settings = () => {
                         <span>Security</span>
                     </button>
                     
-                    <button onClick={() => setActiveTab("notifications")} className={`flex cursor-pointer items-center gap-2 w-full px-4 py-2 rounded-md text-left ${activeTab === "notifications" ? "bg-gray-100 font-medium" : "hover:bg-gray-50"}`}>
+                    {/* <button onClick={() => setActiveTab("notifications")} className={`flex cursor-pointer items-center gap-2 w-full px-4 py-2 rounded-md text-left ${activeTab === "notifications" ? "bg-gray-100 font-medium" : "hover:bg-gray-50"}`}>
                         <Bell size={18} />
                         <span>Notifications</span>
-                    </button>
+                    </button> */}
                     
-                </div>
-            
-                <div className="mt-8">
-                    <LogoutButton />
                 </div>
             </div>
             
@@ -242,7 +237,7 @@ const Settings = () => {
                     </div>
                 )}
                 
-                {activeTab === "notifications" && (
+                {/* {activeTab === "notifications" && (
                     <div>
                         <h2 className="text-xl font-semibold mb-4">Notification Settings</h2>
                         <div className="space-y-4">
@@ -283,7 +278,7 @@ const Settings = () => {
                             </div>
                         </div>
                     </div>
-                )}
+                )} */}
             </div>
         </div>
     </div>

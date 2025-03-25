@@ -1,5 +1,6 @@
 import { useContext } from "react"
 import { APIContext } from "../utils/context/APIContextProvider"
+import LogoutButton from "../components/LogoutButton";
 
 const NavBar = () => {
 
@@ -27,8 +28,14 @@ const NavBar = () => {
                   <h2>Claim System</h2>
               </div>
 
-              <div className="p-2 max-sm:text-[.8rem] text-[1.5rem] font-extrabold ">
-                <h5>{`${getGreeting()}  ${user.data?.first_name} ${user.data?.last_name}`}</h5>
+              <div className="flex items-center gap-1">
+                <div className="p-2 max-sm:text-[.8rem] text-[1.1rem] font-extrabold ">
+                  <h5>{`${getGreeting()}  ${user.data?.first_name} ${user.data?.last_name}`}</h5>
+                </div>
+
+                <div>
+                  <LogoutButton />
+                </div>
               </div>
             </div>
         </nav>

@@ -14,9 +14,9 @@ import NewStaffClaim from "../pages/administrators/NewStaffClaim"
 import { APIContext } from "../utils/context/APIContextProvider"
 import Blocked from "../pages/Blocked"
 import NavBar from "../layout/NavBar"
-import MainAdminDashboard from "../pages/MainAdmin/MainAdminDashboard"
 import AdminDashboard from "../pages/administrators/AdminDashboard"
 import UserManagement from "../pages/administrators/UserManagement"
+import AuditTrail from "../pages/MainAdmin/AuditTrail"
 
 const PageRoutes = () => {
   const { isAuthenticated } = useContext(AuthContext)
@@ -52,13 +52,13 @@ const PageRoutes = () => {
         <Route path="/staff/claim/verify" element={<ClaimVerification />} />
         <Route path="/claims/pending" element={<Pending_claims />} />
         <Route path="/claims/paid" element={<PaidClaims />} />
+        <Route path="/claim/new" element={<NewStaffClaim />} />
         <Route path="/settings" element={<Settings />} />
 
         {/* Routes for Administrators and Higher */}
         {(role === 'administrator' || role === 'main_administrator') && (
             <>
                 <Route path="/payments/history" element={<PaymentHistory />} />
-                <Route path="/staff/claim/new" element={<NewStaffClaim />} />
                 <Route path="/claims/history" element={<HistoryClaims />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/admin/user-management" element={<UserManagement />} />
@@ -68,7 +68,7 @@ const PageRoutes = () => {
         {/* Routes for Main Administrators Only */}
         {role === 'main_administrator' && (
             <>
-                <Route path="main-admin/dashboard" element={<MainAdminDashboard />} />
+                <Route path="/main-admin/audit-trail" element={<AuditTrail />} />
             </>
         )}
 

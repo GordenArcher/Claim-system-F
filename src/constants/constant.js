@@ -6,6 +6,12 @@ export const ClaimsNav = [
       roles: ["accountant", "administrator", "main_administrator"],
     },
     {
+        title: "Create Claim",
+        path: "/claim/new",
+        icon: "plus-circle",
+        roles: ["accountant", "administrator", "main_administrator"],
+      },
+    {
       title: "Pending Claims",
       path: "/claims/pending",
       icon: "clock",
@@ -48,41 +54,23 @@ export const ClaimsNav = [
       icon: "users",
       roles: ["administrator", "main_administrator"],
     },
-    {
-      title: "Approve Claims",
-      path: "/admin/approve",
-      icon: "file-text",
-      roles: ["administrator", "main_administrator"],
-    },
-    {
-      title: "System Logs",
-      path: "/admin/system-logs",
-      icon: "clipboard-list",
-      roles: ["administrator", "main_administrator"],
-    },
+    // {
+    //   title: "Approve Claims",
+    //   path: "/admin/approve",
+    //   icon: "file-text",
+    //   roles: ["administrator", "main_administrator"],
+    // },
+    // {
+    //   title: "System Logs",
+    //   path: "/admin/system-logs",
+    //   icon: "clipboard-list",
+    //   roles: ["administrator", "main_administrator"],
+    // },
     // Main Administrator Only
-    {
-      title: "Main Admin Dashboard",
-      path: "/main-admin/dashboard",
-      icon: "layout-dashboard",
-      roles: ["main_administrator"],
-    },
     {
       title: "Audit Trail",
       path: "/main-admin/audit-trail",
       icon: "search-check",
-      roles: ["main_administrator"],
-    },
-    {
-      title: "Analytics",
-      path: "/main-admin/analytics",
-      icon: "bar-chart",
-      roles: ["main_administrator"],
-    },
-    {
-      title: "Account Settings",
-      path: "/main-admin/account-settings",
-      icon: "settings",
       roles: ["main_administrator"],
     },
   ];

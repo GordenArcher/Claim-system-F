@@ -1,13 +1,10 @@
 import { Loader } from "lucide-react";
 import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { Typewriter } from "react-simple-typewriter";
 import { toast } from "react-toastify";
 import { APIContext } from "../../utils/context/APIContextProvider";
 
 const Register = () => {
-
-  const navigate = useNavigate()
   const { user } = useContext(APIContext)
 
     const role = user?.data?.role;
@@ -52,9 +49,6 @@ const Register = () => {
       if(response.ok){
         const data = await response.json()
         toast.success(data.message)
-        setTimeout(() => {
-         navigate("/") 
-        }, 2000)
       }
       else{
         const errorData = await response.json()
