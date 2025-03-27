@@ -60,12 +60,12 @@ export const ClaimsNav = [
     //   icon: "file-text",
     //   roles: ["administrator", "main_administrator"],
     // },
-    // {
-    //   title: "System Logs",
-    //   path: "/admin/system-logs",
-    //   icon: "clipboard-list",
-    //   roles: ["administrator", "main_administrator"],
-    // },
+    {
+      title: "System Logs",
+      path: "/admin/system-logs",
+      icon: "clipboard-list",
+      roles: ["administrator", "main_administrator"],
+    },
     // Main Administrator Only
     {
       title: "Audit Trail",

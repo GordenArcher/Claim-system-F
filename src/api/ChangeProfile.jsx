@@ -18,8 +18,7 @@ const ChangeProfile = () => {
                 'X-CSRFToken': localStorage.getItem("csrf"),
                 },
                 body: JSON.stringify({
-                    "first_name": profileData?.firstName,
-                    "last_name": profileData?.lastName,
+                    "username": profileData?.username,
                     "email": profileData?.email,
                     "phone_number": profileData?.phoneNumber
                 }) ,

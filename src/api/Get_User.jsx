@@ -15,25 +15,25 @@ const Get_User = () => {
 
             setLoading(true);
             try {
-            const response = await fetch(`${BASE_URL}/profile/get_user/`, {
-                method: "GET",
-                headers: {
-                "Content-Type": "application/json",
-                },
-                credentials: "include",
-            });
-    
-            if (response.ok) {
-                const data = await response.json();
-                setUserData(data);
-            } else {
-                const errorData = await response.json();
-                setError(errorData);
-            }
+                const response = await fetch(`${BASE_URL}/profile/get_user/`, {
+                    method: "GET",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                });
+        
+                if (response.ok) {
+                    const data = await response.json();
+                    setUserData(data);
+                } else {
+                    const errorData = await response.json();
+                    setError(errorData);
+                }
             } catch (err) {
-            console.log(err);
+                console.log(err);
             } finally {
-            setLoading(false);
+                setLoading(false);
             }
         };
 

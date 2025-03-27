@@ -69,8 +69,7 @@ const UserTable = ({ onBlockUser, onDeleteUser, confirmAction, isBlocking, isDel
   const filteredUsers = allUsers?.filter((u) => {
     const query = searchQuery.toLowerCase();
     return (
-      u.employee?.first_name?.toLowerCase().includes(query) ||
-      u.employee?.last_name?.toLowerCase().includes(query) ||
+      u.employee?.username?.toLowerCase().includes(query) ||
       u.employee?.email?.toLowerCase().includes(query) ||
       u.phone_number?.toLowerCase().includes(query) ||
       u.staff_id?.toLowerCase().includes(query) ||
@@ -119,8 +118,7 @@ const UserTable = ({ onBlockUser, onDeleteUser, confirmAction, isBlocking, isDel
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-gray-100 text-gray-600 text-left text-sm uppercase tracking-wider">
-              <th className="p-4">First Name</th>
-              <th className="p-4">Last Name</th>
+              <th className="p-4">Full Name</th>
               <th className="p-4">Email</th>
               <th className="p-4">Phone Number</th>
               <th className="p-4">Staff ID</th>
@@ -136,8 +134,7 @@ const UserTable = ({ onBlockUser, onDeleteUser, confirmAction, isBlocking, isDel
               {filteredUsers?.filter((u) => u.role !== "main_administrator" || user.data.role !== "administrator")
                 .map((user) => (
                   <tr key={user.staff_id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.employee.first_name}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.employee.last_name}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.employee.username}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.employee.email}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.phone_number}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.staff_id}</td>

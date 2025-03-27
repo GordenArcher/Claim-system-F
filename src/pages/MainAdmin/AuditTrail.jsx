@@ -1,16 +1,18 @@
 import React, { useState, useMemo, useContext } from 'react';
 import { APIContext } from '../../utils/context/APIContextProvider';
 import Back from '../../components/Back';
-import {motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import AuditView from '../../components/AuditView';
+import { ChevronLast, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const AuditTable = () => {
   const { auditTrails } = useContext(APIContext);
   const [sortConfig, setSortConfig] = useState({ key: 'timestamp', direction: 'desc' });
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const [selectedClaim, setSelectedClaim] = useState(null);
-
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = (claim) => {
@@ -23,15 +25,15 @@ const AuditTable = () => {
   };
 
   const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   const renderChanges = (changes) => {
     return Object.entries(changes).map(([key, value]) => (
@@ -39,20 +41,20 @@ const AuditTable = () => {
         <span className="font-medium text-gray-700">{key}: </span>
         {typeof value === 'object' ? (
           <span>
-            <span className="text-red-600 line-through">{value.old ? (
-              value.old === true || false ? (
-                value.old === false ? "False" : "True"
-              ) : value.old
-            ) : null}</span> 
+            {value.old !== undefined && (
+              <span className="text-red-600 line-through">
+                {typeof value.old === 'boolean' ? (value.old ? "True" : "False") : value.old?.toString()}
+              </span>
+            )}
             <span className="mx-1">→</span>
-            <span className="text-green-600">{value.new ? (
-              value.new === true || false ? (
-                value.new === false ? "False" : "True"
-              ) : value.new
-            ) : null}</span>
+            {value.new !== undefined && (
+              <span className="text-green-600">
+                {typeof value.new === 'boolean' ? (value.new ? "True" : "False") : value.new?.toString()}
+              </span>
+            )}
           </span>
         ) : (
-          <span className="text-gray-600">{value.toString() ? value.toString() : null}</span>
+          <span className="text-gray-600">{String(value)}</span>
         )}
       </div>
     ));
@@ -65,7 +67,7 @@ const AuditTable = () => {
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       filteredData = filteredData.filter(audit => {
-        const userName = `${audit.user.first_name} ${audit.user.last_name}`.toLowerCase();
+        const userName = `${audit.user.username}`.toLowerCase();
         const email = audit.user.email.toLowerCase();
         const entity = `${audit.entity_type} ${audit.entity_id}`.toLowerCase();
         const action = audit.action.toLowerCase();
@@ -89,8 +91,8 @@ const AuditTable = () => {
         
         switch (sortConfig.key) {
           case 'user':
-            aValue = `${a.user.first_name} ${a.user.last_name}`;
-            bValue = `${b.user.first_name} ${b.user.last_name}`;
+            aValue = `${a.user.username}`;
+            bValue = `${b.user.username}`;
             break;
           case 'action':
             aValue = a.action;
@@ -123,11 +125,20 @@ const AuditTable = () => {
     return filteredData;
   }, [auditTrails, sortConfig, searchTerm]);
 
+  const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = filteredAndSortedData.slice(startIndex, endIndex);
+
   const handleSort = (key) => {
     setSortConfig(prev => ({
       key,
       direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
     }));
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   const getSortIcon = (key) => {
@@ -149,6 +160,73 @@ const AuditTable = () => {
     );
   };
 
+  const renderPaginationControls = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(i);
+    }
+
+    return (
+      <div className="flex justify-between items-center mt-4 px-6 py-3 bg-gray-50">
+        <div className="flex flex-col space-x-2">
+
+        <div className="flex items-center space-x-1">
+              <button 
+                onClick={() => handlePageChange(currentPage - 1)} 
+                disabled={currentPage === 1}
+                className={`p-2 text-gray-800 rounded-md ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200 cursor-pointer"}`}
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+
+              <button 
+                onClick={() => handlePageChange(currentPage + 1)} 
+                disabled={currentPage === totalPages}
+                className={`p-2 text-gray-800 rounded-md ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200 cursor-pointer"}`}
+              >
+              <ChevronRight className="w-5 h-5" />
+              </button>
+
+              <span className="text-gray-700 font-bold">
+                Page {currentPage} of {totalPages}
+              </span>
+          </div>
+
+          <span className="text-sm text-gray-700">
+            Showing {' '}
+            <span className="font-medium">{Math.min(endIndex, filteredAndSortedData.length)}</span>
+            {' '} of {' '}
+            <span className="font-medium">{filteredAndSortedData.length}</span>
+            {' '} results
+          </span>
+
+          
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <label htmlFor="itemsPerPage" className="text-sm text-gray-700">
+            Items per page:
+          </label>
+          <select
+            id="itemsPerPage"
+            value={itemsPerPage}
+            onChange={(e) => {
+              setItemsPerPage(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+            className="border rounded-md px-2 py-1 text-sm"
+          >
+            {[5, 10, 20, 50, 100].map(num => (
+              <option key={num} value={num}>
+                {num}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <Back />
@@ -166,7 +244,10 @@ const AuditTable = () => {
                 type="text"
                 placeholder="Search audits..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
               />
               <svg
@@ -215,23 +296,23 @@ const AuditTable = () => {
                     {getSortIcon('timestamp')}
                   </button>
                 </th>
-                <th>View</th>
+                <th className='px-6 py-4'>Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {filteredAndSortedData.length > 0 ? (
-                filteredAndSortedData.map((audit) => (
+              {paginatedData.length > 0 ? (
+                paginatedData.map((audit) => (
                   <tr key={audit.id} className="hover:bg-gray-50 transition-colors duration-150">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        {/* <div className="flex-shrink-0 h-10 w-10">
+                        <div className="flex-shrink-0 h-10 w-10">
                           <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-medium">
-                            {audit.user.first_name[0]}{audit.user.last_name[0]}
+                            {audit.user.username[0]}
                           </div>
-                        </div> */}
+                        </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {audit.user.first_name} {audit.user.last_name}
+                          <div className="text-sm font-extrabold text-gray-900">
+                            {audit.user.username}
                           </div>
                           <div className="text-sm text-gray-500">
                             {audit.user.email}
@@ -268,7 +349,7 @@ const AuditTable = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
                     {Array.isArray(auditTrails) ? 'No results found' : 'Loading audit trails...'}
                   </td>
                 </tr>
@@ -276,14 +357,20 @@ const AuditTable = () => {
             </tbody>
           </table>
         </div>
+
+        {renderPaginationControls()}
       </div>
 
-        <AnimatePresence>
-          {isOpen && selectedClaim && (
-            <AuditView closeModal={closeModal} selectedClaim={selectedClaim} formatDate={formatDate} renderChanges={renderChanges} />
-          )}
-        </AnimatePresence>
-      
+      <AnimatePresence>
+        {isOpen && selectedClaim && (
+          <AuditView 
+            closeModal={closeModal} 
+            selectedClaim={selectedClaim} 
+            formatDate={formatDate} 
+            renderChanges={renderChanges} 
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

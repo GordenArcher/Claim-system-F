@@ -10,8 +10,7 @@ const Register = () => {
     const role = user?.data?.role;
 
   const [registerData, setRegisterData] = useState({
-    first_name: "",
-    last_name: "",
+    full_name: "",
     email: "",
     phone_number: "",
     role: "",
@@ -27,6 +26,10 @@ const Register = () => {
   const registerUser = async (e) => {
     e.preventDefault();
 
+    if(!registerData.full_name || !registerData.email || !registerData.phone_number || !registerData.password || !registerData.password2) return toast.error("All fields are required")
+
+    if(!registerData.password !== !registerData.password2) return toast.error("password does not match")
+
     setIsSubmitting(true)
 
     try {
@@ -37,8 +40,7 @@ const Register = () => {
           'X-CSRFToken': localStorage.getItem("csrf"),
         }, 
         body: JSON.stringify({
-          first_name: registerData.first_name,
-          last_name: registerData.last_name,
+          full_name: registerData.full_name,
           email: registerData.email,
           phone_number: registerData.phone_number,
           role: registerData.role || "accountant",
@@ -86,30 +88,16 @@ const Register = () => {
           </h2>
           <form className="mt-8" onSubmit={registerUser}>
             <div className="space-y-5">
-              <div className="grid grid-cols-2 gap-4">
-                  <div >
-                    <label className="text-base font-medium text-gray-900">First Name</label>
-                    <input
-                      type="text"
-                      placeholder={"Gorden"}
-                      value={registerData.first_name}
-                      name="first_name"
-                      onChange={(e) => setRegisterData((prev) => ({ ...prev, first_name: e.target.value }))}
-                      className={`mt-2 flex h-10 w-full rounded-md border outline-none px-3 py-2 text-sm focus:ring-1 border-gray-300`}
-                    />
-                  </div>
-
-                    <div >
-                    <label className="text-base font-medium text-gray-900">Last Name</label>
-                    <input
-                      type="text"
-                      placeholder={"Archer"}
-                      name="last_name"
-                      value={registerData.last_name}
-                      onChange={(e) => setRegisterData((prev) => ({ ...prev, last_name: e.target.value }))}
-                      className={`mt-2 flex h-10 w-full rounded-md border outline-none px-3 py-2 text-sm focus:ring-1 border-gray-300`}
-                    />
-                    </div>
+              <div >
+                <label className="text-base font-medium text-gray-900">Full Name</label>
+                <input
+                  type="text"
+                  placeholder={"Gorden Archer"}
+                  value={registerData.full_name}
+                  name="full_name"
+                  onChange={(e) => setRegisterData((prev) => ({ ...prev, full_name: e.target.value }))}
+                  className={`mt-2 flex h-10 w-full rounded-md border outline-none px-3 py-2 text-sm focus:ring-1 border-gray-300`}
+                />
               </div>
 
                 <div className="relative">

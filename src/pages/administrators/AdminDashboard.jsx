@@ -9,7 +9,8 @@ import {
   PieChart,
   BarChart,
   CheckCheck,
-  User
+  User,
+  Loader
 } from 'lucide-react';
 import Back from '../../components/Back';
 import { APIContext } from '../../utils/context/APIContextProvider';
@@ -17,6 +18,7 @@ import ClaimsReportsTab from './Reports';
 import SelectedClaim from '../../components/SelectedClaim';
 import { AnimatePresence } from 'framer-motion';
 import ProcessingTime from './ProcessingTime';
+import Get_staff_processes from '../../api/Get_staff_processes';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -81,6 +83,8 @@ const AdminDashboard = () => {
           minute: '2-digit'
         });
     };
+
+    const { loadingProcessors, topProcessors } = Get_staff_processes()
 
   return (
     <div className="p-6 max-w-full bg-gray-50 min-h-screen">
@@ -169,7 +173,6 @@ const AdminDashboard = () => {
         <p className="text-xs text-gray-500 mt-2">Payment rate: {reportSummery.payment_rate}%</p>
       </div>
 
-      {/* Total Amount Paid */}
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div className="flex justify-between items-start">
           <div>
@@ -253,7 +256,6 @@ const AdminDashboard = () => {
                     <option>All Statuses</option>
                     <option>Pending</option>
                     <option>Approved</option>
-                    <option>Rejected</option>
                   </select>
                   <input type="text" className="border rounded p-1 text-sm" placeholder="Amount" />
                   <input type="text" className="border rounded p-1 text-sm" placeholder="Reason" />
@@ -266,8 +268,8 @@ const AdminDashboard = () => {
             
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
+                    <thead className="bg-gray-50 sticky top-0 z-10">
+                        <tr className='bg-gray-100 text-gray-600 text-left text-sm uppercase tracking-wider'>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Claim ID</th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">name</th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
@@ -284,7 +286,7 @@ const AdminDashboard = () => {
                                 <tr key={index} className="hover:bg-gray-50">
                                 <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{claim.claim_number}</td>
                                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
-                                    {claim.staff?.employee?.first_name} {claim.staff?.employee?.last_name}
+                                    {claim.staff?.employee?.username}
                                 </td>
                                 <td width={500} className="px-2 py-3 whitespace-nowrap text-sm text-gray-800">{claim.claim_reason}</td>
                                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800">&#x20B5;{claim.amount}</td>
@@ -303,7 +305,7 @@ const AdminDashboard = () => {
                                     <div className="flex gap-1">
                                         <button onClick={() => openModal(claim)} className="text-gray-600 cursor-pointer hover:text-gray-800">View</button>
                                             <span className="text-gray-300">|</span>
-                                        <button className="text-gray-600 hover:text-gray-800">Edit</button>
+                                        {/* <button className="text-gray-600 hover:text-gray-800">Edit</button> */}
                                     </div>
                                 </td>
                                 </tr>
@@ -326,93 +328,33 @@ const AdminDashboard = () => {
           </div>
           
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-              <h2 className="font-semibold text-gray-800 mb-4">Claims by Type</h2>
-              <div className="flex items-center justify-center mb-2">
-                <PieChart className="h-32 w-32 text-gray-500 opacity-75" />
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-gray-500"></div>
-                    <span className="text-sm">Medical</span>
-                  </div>
-                  <span className="text-sm font-medium">42%</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span className="text-sm">Property</span>
-                  </div>
-                  <span className="text-sm font-medium">28%</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <span className="text-sm">Auto</span>
-                  </div>
-                  <span className="text-sm font-medium">18%</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-                    <span className="text-sm">Liability</span>
-                  </div>
-                  <span className="text-sm font-medium">12%</span>
-                </div>
-              </div>
-            </div>
             
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
               <h2 className="font-semibold text-gray-800 mb-4">Top Claim Processors</h2>
               <div className="space-y-3">
-                <div className="flex items-center gap-3">
+              {loadingProcessors ? <Loader /> : (
+                topProcessors?.length > 0 ? (
+                  topProcessors?.map((u) => (
+                    <div key={u.name} className="flex items-center gap-3">
                   <div className="bg-gray-100 p-2 rounded-full">
                     <User className="h-5 w-5 text-gray-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">Rebecca Johnson</p>
+                    <p className="text-sm font-medium">{u.name}</p>
                     <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                      <div className="bg-gray-600 h-2 rounded-full" style={{ width: '78%' }}></div>
+                      <div className="bg-gray-600 h-2 rounded-full" style={{ width: `${u.percentage}%` }}></div>
                     </div>
                     <div className="flex justify-between mt-1">
-                      <span className="text-xs text-gray-500">54 claims processed</span>
-                      <span className="text-xs font-medium">78% approval</span>
+                      <span className="text-xs text-gray-500">{u.claims_processed} claims processed</span>
+                      <span className="text-xs font-medium">{u.percentage}% approval</span>
                     </div>
                   </div>
                 </div>
-                
-                <div className="flex items-center gap-3">
-                  <div className="bg-green-100 p-2 rounded-full">
-                    <User className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Marcus Williams</p>
-                    <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                      <div className="bg-green-600 h-2 rounded-full" style={{ width: '65%' }}></div>
-                    </div>
-                    <div className="flex justify-between mt-1">
-                      <span className="text-xs text-gray-500">42 claims processed</span>
-                      <span className="text-xs font-medium">65% approval</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-3">
-                  <div className="bg-purple-100 p-2 rounded-full">
-                    <User className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Sophia Martinez</p>
-                    <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                      <div className="bg-purple-600 h-2 rounded-full" style={{ width: '82%' }}></div>
-                    </div>
-                    <div className="flex justify-between mt-1">
-                      <span className="text-xs text-gray-500">36 claims processed</span>
-                      <span className="text-xs font-medium">82% approval</span>
-                    </div>
-                  </div>
-                </div>
+                  ))
+                ) : (
+                  <div>No User has processed any claim</div>
+                )
+              )}
               </div>
             </div>
             

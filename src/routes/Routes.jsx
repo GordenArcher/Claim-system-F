@@ -17,6 +17,7 @@ import NavBar from "../layout/NavBar"
 import AdminDashboard from "../pages/administrators/AdminDashboard"
 import UserManagement from "../pages/administrators/UserManagement"
 import AuditTrail from "../pages/MainAdmin/AuditTrail"
+import SytemLogs from "../pages/administrators/SytemLogs"
 
 const PageRoutes = () => {
   const { isAuthenticated } = useContext(AuthContext)
@@ -34,7 +35,7 @@ const PageRoutes = () => {
 
   const role = user?.data?.role;
 
-  if(user?.data?.has_access){
+  if(user?.data?.is_blocked){
     return (
         <Routes>
             <Route path="/" element={<Blocked />} />
@@ -61,6 +62,7 @@ const PageRoutes = () => {
                 <Route path="/payments/history" element={<PaymentHistory />} />
                 <Route path="/claims/history" element={<HistoryClaims />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/system-logs" element={<SytemLogs /> } />
                 <Route path="/admin/user-management" element={<UserManagement />} />
             </>
         )}

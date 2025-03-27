@@ -121,15 +121,15 @@ const ClaimSearchAndDisplay = () => {
               <tr>
                 <td className="px-6 py-4 text-sm text-gray-900">{staff_claim.data.claim_number}</td>
                 <td className="px-6 py-4 text-sm text-gray-900">
-                  {staff_claim.data.staff.employee.first_name} {staff_claim.data.staff.employee.last_name}
+                  {staff_claim.data.staff.employee.username}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900">
                   ${Number(staff_claim.data.amount).toLocaleString("en-US", {
                     minimumFractionDigits: 2,
                   })}
                 </td>
-                <td width={500} className="px-4 py-2 border">
-                {staff_claim.claim_reason}
+                <td width={300} className="px-4 py-2">
+                  {staff_claim.data.claim_reason}
                 </td>
                 <td className="px-6 py-4 text-sm">
                   <span
@@ -160,9 +160,9 @@ const ClaimSearchAndDisplay = () => {
                 <td className="px-6 py-4 text-center">
                   <button
                     onClick={() => openModal(staff_claim.data)}
-                    className="bg-gray-900 text-white p-3.5 cursor-pointer rounded-full hover:bg-gray-700"
+                    className="text-gray-600 cursor-pointer hover:text-gray-800"
                   >
-                    <Menu size={20} />
+                    View
                   </button>
                 </td>
               </tr>
@@ -175,7 +175,6 @@ const ClaimSearchAndDisplay = () => {
         <div className="text-center py-8 text-gray-600">Search for a claim by Claim number</div>
       )}
 
-      {/* Modal */}
       {isOpen && selectedClaim && (
         <SelectedClaim selectedClaim={selectedClaim} closeModal={closeModal} formatDate={formatDate} />
       )}

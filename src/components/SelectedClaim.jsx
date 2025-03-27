@@ -21,7 +21,7 @@ const SelectedClaim = ({ selectedClaim, formatDate, closeModal }) => {
             <p><strong>Claim Number:</strong> {selectedClaim.claim_number}</p>
             <p><strong>Amount:</strong> GHc{Number(selectedClaim.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}</p>
             <p><strong>Status:</strong> {selectedClaim.status}</p>
-            <p><strong>Name:</strong> {selectedClaim.staff.employee.first_name} {selectedClaim.staff.employee.last_name}</p>
+            <p><strong>Name:</strong> {selectedClaim.staff.employee.username}</p>
             <p><strong>Staff ID:</strong> {selectedClaim.staff.staff_id}</p>
             <p><strong>Phone:</strong> {selectedClaim.staff.phone_number}</p>
             <p><strong>Email:</strong> {selectedClaim.staff.employee.email || "Not provided"}</p>

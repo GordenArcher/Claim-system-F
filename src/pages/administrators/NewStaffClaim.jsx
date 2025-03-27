@@ -6,8 +6,7 @@ const StaffClaim = () => {
   const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
+    full_name: '',
     employee_email: '',
     phone_number: '',
     claim_amount: '',
@@ -32,20 +31,19 @@ const StaffClaim = () => {
         credentials: "include",
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        toast.success("Claim submitted successfully!");
+        const data = await response.json()
+        toast.success(data.message)
         setFormData({
-          first_name: '',
-          last_name: '',
+          full_name: '',
           employee_email: '',
           phone_number: '',
           claim_amount: '',
           claim_reason: '',
         });
       } else {
-        toast.error(`Error: ${data.message || "Something went wrong"}`);
+        const errorData = await response.json();
+        toast.error(`Error: ${errorData.message || "Something went wrong"}`);
       }
     } catch (error) {
       console.error("Error submitting claim:", error);
@@ -65,26 +63,15 @@ const StaffClaim = () => {
         <div className="p-7 max-w-lg mx-auto">
           <h3 className="text-xl font-black text-gray-900 mb-4">Submit a New Claim</h3>
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <input 
-              type="text" 
-              name="first_name" 
-              placeholder="First Name" 
-              value={formData.first_name} 
-              onChange={handleChange} 
-              required 
-              className="p-3 border border-gray-300 rounded w-full outline-none focus:ring focus:ring-gray-200"
-            />
-            <input 
-              type="text" 
-              name="last_name" 
-              placeholder="Last Name" 
-              value={formData.last_name} 
-              onChange={handleChange} 
-              required 
-              className="p-3 border border-gray-300 rounded w-full outline-none focus:ring focus:ring-gray-200"
-            />
-          </div>
+          <input 
+            type="text" 
+            name="full_name" 
+            placeholder="Full Name" 
+            value={formData.full_name} 
+            onChange={handleChange} 
+            required 
+            className="p-3 border border-gray-300 rounded w-full outline-none focus:ring focus:ring-gray-200"
+          />
           <input 
             type="email" 
             name="employee_email" 
@@ -122,7 +109,7 @@ const StaffClaim = () => {
           />
           <button 
             type="submit" 
-            className="bg-gray-800 text-white px-6 py-3 rounded w-full hover:bg-gray-700 transition shadow-md"
+            className="bg-gray-800 cursor-pointer text-white px-6 py-3 rounded w-full hover:bg-gray-700 transition shadow-md"
           >
             Submit Claim
           </button>

@@ -48,31 +48,31 @@ const PaymentHistory = () => {
     {payHistory?.history?.length > 0 ? (
     <>
         <div className="max-h-[500px] overflow-y-auto border border-gray-300">
-            <table className="min-w-full border-collapse">
+            <table className="min-w-full divide-y border-collapse">
                 <thead className="bg-gray-50 sticky top-0 z-10">
                 <tr>
-                    <th className="px-4 py-2 border">Claim Number</th>
-                    <th className="px-4 py-2 border">Name</th>
-                    <th className="px-4 py-2 border">Amount</th>
-                    <th className="px-4 py-2 border">Reason</th>
-                    <th className="px-4 py-2 border">Status</th>
-                    <th className="px-4 py-2 border">Action</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Claim Number</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                 </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                 {payHistory.history.map((claim) => (
                     <tr key={claim.claim_number} className="bg-white">
-                    <td className="px-4 py-2 border">{claim.claim_number}</td>
-                    <td className="px-4 py-2 border">
-                        {claim.staff.employee.first_name} {claim.staff.employee.last_name}
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{claim.claim_number}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">
+                        {claim.staff.employee.username}
                     </td>
-                    <td className="px-4 py-2 border">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">
                         Ghc{Number(claim.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
                     </td>
-                    <td width={500} className="px-4 py-2 border">
+                    <td width={500} className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">
                         {claim.claim_reason}
                     </td>
-                    <td className="px-4 text-center py-2 border">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">
                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
                         claim.status === "paid" ? "bg-green-100 p-2 text-green-800" :
                         claim.status === "pending" ? "bg-yellow-100 p-2 text-yellow-800" :
@@ -81,12 +81,12 @@ const PaymentHistory = () => {
                         {claim.status}
                         </span>
                     </td>
-                    <td className="px-4 flex items-center justify-center text-center py-2 border">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">
                         <button
                         onClick={() => openModal(claim)}
-                        className="bg-gray-900 text-white p-3.5 cursor-pointer rounded-full hover:bg-gray-700"
+                        className="text-gray-600 cursor-pointer hover:text-gray-800"
                         >
-                        <Menu size={20} />
+                        View
                         </button>
                     </td>
                     </tr>

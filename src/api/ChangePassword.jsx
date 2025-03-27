@@ -7,32 +7,30 @@ const ChangePassword = () => {
 
   const change_password = useCallback( async (profileData) => {
 
+      if(profileData.newPassword !== profileData.confirmPassword) return toast.error("New passwords don't match");
+
       setIsChangingPassword(true)
-
-      if (profileData.newPassword !== profileData.confirmPassword) {
-        toast.error("New passwords don't match");
-        return;
-      }
-
       try {
-          const response = await fetch(`${BASE_URL}/profile/change_password/`, {
+          const response = await fetch(`${BASE_URL}/staff/change_password/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
             'X-CSRFToken': localStorage.getItem("csrf"),
             },
             body: JSON.stringify({
-                "old_password": profileData?.currentPassword,
-                "new_password": profileData?.newPassword,
-                "new_password2": profileData?.confirmPassword
+                "currentPassword": profileData?.currentPassword,
+                "newPassword": profileData?.newPassword,
+                "confirmPassword": profileData?.confirmPassword
             }) ,
             credentials: "include",
           })
-          console.log(profileData)
   
           if (response.ok){
             const data = await response.json()
             toast.success(data.message)
+            profileData.currentPassword = ""
+            profileData.newPassword = ""
+            profileData.confirmPassword = ""
           }
           else{
             const errorData = await response.json()

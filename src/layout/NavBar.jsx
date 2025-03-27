@@ -30,7 +30,7 @@ const NavBar = () => {
 
               <div className="flex items-center gap-1">
                 <div className="p-2 max-sm:text-[.8rem] text-[1.1rem] font-extrabold ">
-                  <h5>{`${getGreeting()}  ${user.data?.first_name} ${user.data?.last_name}`}</h5>
+                  <h5 className="capitalize">{`${getGreeting()}  ${user.data?.username}`}</h5>
                 </div>
 
                 <div>

@@ -8,6 +8,7 @@ import Get_all_users from "../../api/Get_all_users"
 import Get_recent_claims from "../../api/Get_recent_claims"
 import Get_report_summery from "../../api/Get_Summery"
 import Get_audit from "../../api/Get_auditTrials"
+import { Get_users_logs } from "../../api/Get_staff_logs"
 
 
 export const APIContext = createContext()
@@ -22,6 +23,7 @@ const APIContextProvider = ({children}) => {
   const [payHistory, setPayHistory] = useState([])
   const [reportSummery, setReportSummery] = useState([])
   const [auditTrails, setAuditTrails] = useState([])
+  const [logsSystem, setLogsSystem] = useState([])
   
 
   const { userData } = Get_User()
@@ -33,6 +35,7 @@ const APIContextProvider = ({children}) => {
   const { users, isGettingUsers } = Get_all_users()
   const { summeryReports } = Get_report_summery()
   const { allAudit } = Get_audit()
+  const { systemLogs } = Get_users_logs()
   
 
   useEffect(() => {
@@ -45,7 +48,8 @@ const APIContextProvider = ({children}) => {
     setAllUsers(users)
     setReportSummery(summeryReports)
     setAuditTrails(allAudit)
-  }, [data, allClaims, paidData, paymentHistory, userData, users, recentClaims, summeryReports, allAudit])
+    setLogsSystem(systemLogs)
+  }, [data, allClaims, paidData, paymentHistory, userData, users, recentClaims, summeryReports, allAudit, systemLogs])
 
 
   return (
@@ -56,11 +60,13 @@ const APIContextProvider = ({children}) => {
     paidClaims, 
     payHistory,
     user,
+    setUser,
     allUsers,
     setAllUsers,
     isGettingUsers,
     reportSummery,
-    auditTrails
+    auditTrails,
+    logsSystem,
     }}>
       {children}
     </APIContext.Provider>

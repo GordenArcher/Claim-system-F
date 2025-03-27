@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Loader, Menu } from "lucide-react";
 import Back from "../../components/Back";
 import PayClaim from "../../api/Pay_Claim";
+import axios from "axios";
 
 const Pending_claims = () => {
 
@@ -13,6 +14,7 @@ const Pending_claims = () => {
     const [showModal, setShowModal] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const { isLoading, claim_payment } = PayClaim();
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL
 
     const openModal = (claim) => {
       setSelectedClaim(claim);
@@ -39,22 +41,25 @@ const Pending_claims = () => {
         setShowModal(true);
     };
 
-    const handleConfirmPayment = async (claim_number, phone_number) => {
+    const get_Claim = async () => {
         try {
-          const response = await claim_payment(claim_number, phone_number);
-      
-          if (response?.success) {
-            setPendingClaims((prevClaims) => ({
-              ...prevClaims,
-              data: prevClaims.data.filter(claim => claim.claim_number !== claim_number)
-            }));
-      
-            
-          }
+            const response = await axios.get(`${BASE_URL}/pending_claims/`, {withCredentials: true})
+
+            return setPendingClaims(response.data)
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const handleConfirmPayment = async (claim_number) => {
+        try {
+            await claim_payment(claim_number);
+          
+            await get_Claim()
         } catch (error) {
           console.error("Payment failed:", error);
-        }finally{
-            setShowModal(false);
+        } finally {
+          setShowModal(false);
         }
       };
       
@@ -71,30 +76,30 @@ const Pending_claims = () => {
                     <div className="max-h-[500px] overflow-y-auto border border-gray-300">
                         <table className="min-w-full border-collapse">
                             <thead className="bg-gray-50 sticky top-0 z-10">
-                                <tr>
-                                    <th className="px-4 py-2 border">Claim Number</th>
-                                    <th className="px-4 py-2 border">Name</th>
-                                    <th className="px-4 py-2 border">Amount</th>
-                                    <th className="px-4 py-2 border">Reason</th>
-                                    <th className="px-4 py-2 border">Status</th>
-                                    <th className="px-4 py-2 border">Action</th>
-                                    <th className="px-4 py-2 border">View</th>
+                                <tr className="bg-gray-100 text-gray-600 text-left text-sm uppercase tracking-wider">
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Claim Number</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">View</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
                                 {pendingClaims.data.map((claim) => (
-                                    <tr key={claim.claim_number} className="bg-white border-b">
-                                        <td className="px-4 py-2 border">{claim.claim_number}</td>
-                                        <td className="px-4 py-2 border">
-                                            {claim.staff.employee.first_name} {claim.staff.employee.last_name}
+                                    <tr key={claim.claim_number} className="bg-white">
+                                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{claim.claim_number}</td>
+                                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                            {claim.staff.employee.username}
                                         </td>
-                                        <td className="px-4 py-2 border">
+                                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                                             Ghc{Number(claim.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
                                         </td>
-                                        <td width={500} className="px-4 py-2 border">
+                                        <td width={500} className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                                             {claim.claim_reason}
                                         </td>
-                                        <td className="px-4 text-center py-2 border">
+                                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                                             <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
                                                 claim.status === "paid" ? "bg-green-100 text-green-800" :
                                                 claim.status === "pending" ? "bg-yellow-100 text-yellow-800" :
@@ -103,20 +108,15 @@ const Pending_claims = () => {
                                                 {claim.status}
                                             </span>
                                         </td>
-                                        <td className="px-4 text-center py-2">
-                                            <button 
-                                                onClick={() => handlePaymentClick(claim)} 
-                                                className="bg-gray-800 cursor-pointer text-white px-3 py-1 rounded hover:bg-gray-700"
-                                            >
+                                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                            <button onClick={() => handlePaymentClick(claim)} className="bg-gray-800 cursor-pointer text-white px-3 py-1 rounded hover:bg-gray-700">
                                                 Pay
                                             </button>
                                         </td>
-                                        <td className="px-4 flex items-center justify-center text-center py-2 border">
-                                            <button
-                                                onClick={() => openModal(claim)}
-                                                className="bg-gray-900 text-white p-3.5 cursor-pointer rounded-full hover:bg-gray-700"
+                                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                            <button onClick={() => openModal(claim)} className="text-gray-600 cursor-pointer hover:text-gray-800"
                                             >
-                                                <Menu size={20} />
+                                                View
                                             </button>
                                         </td>
                                     </tr>
@@ -156,7 +156,7 @@ const Pending_claims = () => {
                                 </h3>
                                 <div className="mt-4 flex justify-end gap-4">
                                     <button 
-                                        onClick={() => handleConfirmPayment(selectedClaim.claim_number, selectedClaim.staff.phone_number)} 
+                                        onClick={() => handleConfirmPayment(selectedClaim.claim_number)} 
                                         className="bg-green-500 text-white cursor-pointer px-4 py-2 rounded hover:bg-green-600"
                                     >
                                         {isLoading ? <Loader className="animate-spin" /> : "Yes, Pay"}
