@@ -41,6 +41,7 @@ const Login = () => {
         toast.success(data.message)
         setIsAuthenticated(data.auth)
       }
+      
       else{
         const errorData = await response.json()
         toast.error(errorData.message)
@@ -53,7 +54,6 @@ const Login = () => {
     }
   }
 
-
   return (
     <div className="w-full h-screen bg-gradient-to-b from-gray-900 to-gray-700">
       <div className="max-w-[500px]  m-auto h-full flex items-center justify-center ">
@@ -63,7 +63,7 @@ const Login = () => {
               <div className="mb-2 flex justify-center"></div>
               <h2 className="text-center text-2xl font-bold leading-tight text-black">
               <Typewriter
-                  words={['Sign in as an accountant']}
+                  words={['Sign in']}
                   loop={true}
                   cursor
                   cursorStyle="."

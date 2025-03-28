@@ -47,3 +47,48 @@ const Get_staff_processes = () => {
 }
 
 export default Get_staff_processes
+
+
+// This api gets all claims status
+export const Get_Claim_Status = () => {
+    const { isAuthenticated } = useContext(AuthContext)
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL
+    const [error, setError] = useState(null)
+    const [loadingstatus, setLoadingProcessors] = useState(false);
+    const [claimStatus, setclaimStatus] = useState([])
+
+    useEffect(() => {
+        const get_All_Claim = async () => {
+
+            setLoadingProcessors(true);
+            try {
+            const response = await fetch(`${BASE_URL}/reports/claims-by-status/`, {
+                method: "GET",
+                headers: {
+                "Content-Type": "application/json",
+                },
+                credentials: "include",
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                setclaimStatus(data);
+            } else {
+                const errorData = await response.json();
+                setError(errorData);
+            }
+            } catch (err) {
+            console.log(err);
+            } finally {
+            setLoadingProcessors(false);
+            }
+        };
+
+        if(isAuthenticated) {
+            get_All_Claim()
+        }
+
+    }, [BASE_URL, isAuthenticated])
+    
+    return {loadingstatus, error, claimStatus};
+}

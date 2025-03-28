@@ -1,20 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { Calendar, Filter, Download, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import ProcessingTime from './ProcessingTime';
 import Get_processingData from '../../api/Get_processingData';
 import Get_PaymentData from '../../api/Get_PaymentData';
+import { APIContext } from '../../utils/context/APIContextProvider';
 
 export default function ClaimsReportsTab() {
   const [selectedReport, setSelectedReport] = useState('totalPayments');
-
-  
-  const statusData = [
-    { name: 'Approved', value: 65 },
-    { name: 'Pending', value: 20 },
-    { name: 'Denied', value: 10 },
-    { name: 'Under Review', value: 5 }
-  ];
+  const { claimStatusData } = useContext(APIContext)
   
   const {getProcessingTimeData } = Get_processingData()
   const { getPaymentData, paymentData } = Get_PaymentData()
@@ -74,7 +68,7 @@ export default function ClaimsReportsTab() {
             <div className="flex items-center justify-center">
               <PieChart width={400} height={300}>
                 <Pie
-                  data={statusData}
+                  data={claimStatusData?.data}
                   cx="50%"
                   cy="50%"
                   labelLine={true}
@@ -83,7 +77,7 @@ export default function ClaimsReportsTab() {
                   dataKey="value"
                   label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
                 >
-                  {statusData.map((entry, index) => (
+                  {claimStatusData?.data.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -92,9 +86,7 @@ export default function ClaimsReportsTab() {
             </div>
             <div className="mt-4 w-full text-sm text-gray-600">
               <p className="font-medium">Summary:</p>
-              <p>Total Claims: 500</p>
-              <p>Approval Rate: 65%</p>
-              <p>Denial Rate: 10%</p>
+              <p>Total Claims: {claimStatusData.total_claims}</p>
             </div>
           </div>
         );
@@ -113,18 +105,10 @@ export default function ClaimsReportsTab() {
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold text-gray-800">Claims Reports</h2>
           <div className="flex space-x-2">
-            <button className="flex items-center px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
-              <Calendar className="h-4 w-4 mr-2" />
-              This Month
-            </button>
-            <button className="flex items-center px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </button>
-            <button className="flex items-center px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+            {/* <button className="flex items-center px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
               <Download className="h-4 w-4 mr-2" />
               Export
-            </button>
+            </button> */}
             <button onClick={refreshDatas} className="flex items-center px-3 py-2 cursor-pointer bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
               {isLoading ? (
                 <>
@@ -145,22 +129,15 @@ export default function ClaimsReportsTab() {
       
       <div className="p-4">
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <button 
-            className={`p-3 border rounded-lg text-center ${selectedReport === 'totalPayments' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white hover:bg-gray-50'}`}
-            onClick={() => setSelectedReport('totalPayments')}
-          >
+          <button className={`p-3 border cursor-pointer rounded-lg text-center ${selectedReport === 'totalPayments' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white hover:bg-gray-50'}`} onClick={() => setSelectedReport('totalPayments')}>
             Total Payments Made
           </button>
-          <button 
-            className={`p-3 border rounded-lg text-center ${selectedReport === 'claimStatus' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white hover:bg-gray-50'}`}
-            onClick={() => setSelectedReport('claimStatus')}
-          >
+
+          <button className={`p-3 border cursor-pointer rounded-lg text-center ${selectedReport === 'claimStatus' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white hover:bg-gray-50'}`} onClick={() => setSelectedReport('claimStatus')}>
             Claims by Status
           </button>
-          <button 
-            className={`p-3 border rounded-lg text-center ${selectedReport === 'processingTime' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white hover:bg-gray-50'}`}
-            onClick={() => setSelectedReport('processingTime')}
-          >
+
+          <button className={`p-3 border cursor-pointer rounded-lg text-center ${selectedReport === 'processingTime' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white hover:bg-gray-50'}`} onClick={() => setSelectedReport('processingTime')}>
             Processing Time
           </button>
         </div>
