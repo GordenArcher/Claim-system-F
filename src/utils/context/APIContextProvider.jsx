@@ -28,7 +28,7 @@ const APIContextProvider = ({children}) => {
   const [claimStatusData, getClaimStatusData] = useState([])
   
 
-  const { userData } = Get_User()
+  const { userData, isLoadingUser } = Get_User()
   const { data } = Get_pending_claims()
   const { allClaims } = Get_all_claims()
   const { recentClaims } = Get_recent_claims()
@@ -64,6 +64,7 @@ const APIContextProvider = ({children}) => {
     paidClaims, 
     payHistory,
     user,
+    isLoadingUser,
     setUser,
     allUsers,
     setAllUsers,

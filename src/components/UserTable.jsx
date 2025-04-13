@@ -65,7 +65,6 @@ const UserTable = ({ onBlockUser, onDeleteUser, confirmAction, isBlocking, isDel
     }
   }, [BASE_URL, setAllUsers]);
 
-  // Filter users based on search query
   const filteredUsers = allUsers?.filter((u) => {
     const query = searchQuery.toLowerCase();
     return (
@@ -176,13 +175,6 @@ const UserTable = ({ onBlockUser, onDeleteUser, confirmAction, isBlocking, isDel
                             {isDeletingUser && confirmAction?.userId === user.staff_id && confirmAction?.type === 'delete' ? 
                             <Loader className="animate-spin h-4 w-4" /> : 
                             <Trash2 className="h-4 w-4" />} Delete
-                        </button>
-
-                        <button className="p-2 cursor-pointer flex items-center gap-2 transition-all text-green-500 hover:text-green-600">
-                            <div className="flex items-center gap-1">
-                                <PenIcon className="h-4 w-4" /> 
-                                <span>Edit</span>
-                            </div>
                         </button>
                     </td>
                   </tr>

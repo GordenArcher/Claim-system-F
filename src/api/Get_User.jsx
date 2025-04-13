@@ -7,13 +7,14 @@ const Get_User = () => {
 
     const BASE_URL = import.meta.env.VITE_BACKEND_URL
     const [error, setError] = useState(null)
-    const [loading, setLoading] = useState(false);
+    const [isLoadingUser, setIsLoadingUser] = useState(true);
     const [userData, setUserData] = useState([])
 
     useEffect(() => {
         const get_current_user = async () => {
 
-            setLoading(true);
+            setIsLoadingUser(true);
+
             try {
                 const response = await fetch(`${BASE_URL}/profile/get_user/`, {
                     method: "GET",
@@ -33,7 +34,7 @@ const Get_User = () => {
             } catch (err) {
                 console.log(err);
             } finally {
-                setLoading(false);
+                // setIsLoadingUser(false);
             }
         };
 
@@ -43,7 +44,7 @@ const Get_User = () => {
 
     }, [BASE_URL, isAuthenticated])
     
-    return {loading, error, userData};
+    return {isLoadingUser, error, userData};
 }
 
 export default Get_User

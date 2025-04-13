@@ -23,9 +23,28 @@ const icons = {
 };
 
 export const HomeGrid = () => {
-    const { user } = useContext(APIContext);
+    const { user, isLoadingUser } = useContext(APIContext);
+
+
+    if (isLoadingUser) {
+        return (
+          <div className="w-full p-4 md:p-8">
+            <div className="container mx-auto">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {Array(8).fill().map((_, index) => (
+                  <div 
+                    key={index} 
+                    className="bg-gray-200 rounded-lg h-35 animate-pulse"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      }
 
     const filteredNav = ClaimsNav.filter(item => item.roles.includes(user.data?.role));
+
 
     return (
         <div className="w-full p-4 md:p-8">

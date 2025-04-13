@@ -4,7 +4,7 @@ import LogoutButton from "../components/LogoutButton";
 
 const NavBar = () => {
 
-  const { user } = useContext(APIContext)
+  const { user, isLoadingUser } = useContext(APIContext)
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -30,9 +30,12 @@ const NavBar = () => {
 
               <div className="flex items-center gap-1">
                 <div className="p-2 max-sm:text-[.8rem] text-[1.1rem] font-extrabold ">
-                  <h5 className="capitalize">{`${getGreeting()}  ${user.data?.username}`}</h5>
+                  {isLoadingUser ? (
+                    <div className="animate-pulse w-[200px] h-10 bg-gray-200 rounded"></div>
+                  ) : (
+                    <h5 className="capitalize">{`${getGreeting()}  ${user.data?.username}`}</h5>
+                  )}
                 </div>
-
                 <div>
                   <LogoutButton />
                 </div>
