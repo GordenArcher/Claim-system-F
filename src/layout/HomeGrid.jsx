@@ -3,6 +3,7 @@ import { ClaimsNav } from "../constants/constant";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { APIContext } from "../utils/context/APIContextProvider";
+import SkeletonLoader from "../components/SkeletonLoader";
 
 const icons = {
   "layout-dashboard": Home,
@@ -27,20 +28,7 @@ export const HomeGrid = () => {
 
 
     if (isLoadingUser) {
-        return (
-          <div className="w-full p-4 md:p-8">
-            <div className="container mx-auto">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {Array(8).fill().map((_, index) => (
-                  <div 
-                    key={index} 
-                    className="bg-gray-200 rounded-lg h-35 animate-pulse"
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        );
+        return <SkeletonLoader number={8} />
       }
 
     const filteredNav = ClaimsNav.filter(item => item.roles.includes(user.data?.role));

@@ -7,7 +7,7 @@ const Get_User = () => {
 
     const BASE_URL = import.meta.env.VITE_BACKEND_URL
     const [error, setError] = useState(null)
-    const [isLoadingUser, setIsLoadingUser] = useState(true);
+    const [isLoadingUser, setIsLoadingUser] = useState(false);
     const [userData, setUserData] = useState([])
 
     useEffect(() => {
@@ -34,7 +34,7 @@ const Get_User = () => {
             } catch (err) {
                 console.log(err);
             } finally {
-                // setIsLoadingUser(false);
+                setIsLoadingUser(false);
             }
         };
 

@@ -28,14 +28,8 @@ const ClaimSearchAndDisplay = () => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  };
+    return date.toDateString();
+};
 
   const getErrorMessage = (error) => {
     if (typeof error === 'string') return error;
@@ -47,7 +41,7 @@ const ClaimSearchAndDisplay = () => {
   const { isLoading, claim_payment } = PayClaim();
 
   return (
-    <div className="w-full mt-6 max-w-6xl mx-auto p-4">
+    <div className="w-full mt-6 mx-auto p-4">
       <Back />
       <div className="mb-6">
         <div className="flex gap-2">
@@ -58,7 +52,7 @@ const ClaimSearchAndDisplay = () => {
             <input
               type="text"
               className="block w-full h-[55px] pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:border-black transition duration-300"
-              placeholder="Search by claim number"
+              placeholder="Search by request number"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -108,71 +102,100 @@ const ClaimSearchAndDisplay = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Claim Number</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">View</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request Number</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Number</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Name</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Posting Date</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Claim Reason</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request Amount</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              <tr>
-                <td className="px-6 py-4 text-sm text-gray-900">{staff_claim.data.claim_number}</td>
-                <td className="px-6 py-4 text-sm text-gray-900">
-                  {staff_claim.data.staff.employee.username}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-900">
-                  ${Number(staff_claim.data.amount).toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                  })}
-                </td>
-                <td width={300} className="px-4 py-2">
-                  {staff_claim.data.claim_reason}
-                </td>
-                <td className="px-6 py-4 text-sm">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      staff_claim.data.status === "paid"
-                        ? "bg-green-100 text-green-800"
-                        : staff_claim.data.status === "pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}
-                  >
-                    {staff_claim.data.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm">
-                  {staff_claim.data.status === "pending" ? (
-                    <div>
-                      <button 
-                            onClick={() => claim_payment(staff_claim.data.claim_number)} 
-                            className="bg-gray-800 cursor-pointer text-white px-3 py-1 rounded hover:bg-gray-700"
+              {Array.isArray(staff_claim.data) ? (
+                staff_claim.data.map((claim, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{claim.claim_number}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{claim.staff_number}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{claim.full_name}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{formatDate(claim.created_at)}</td>
+                    <td width={300} className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{claim.claim_reason}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">
+                      Ghc{Number(claim.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        claim.status === "paid" ? "bg-green-100 text-green-800" :
+                        claim.status === "pending" ? "bg-yellow-100 text-yellow-800" :
+                        "bg-gray-100 text-gray-800"
+                      }`}>
+                        {claim.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">
+                      {claim.status === "pending" && (
+                        <button 
+                          onClick={() => claim_payment(claim.claim_number)} 
+                          className="bg-gray-800 cursor-pointer text-white px-3 py-1 rounded hover:bg-gray-700"
                         >
                           {isLoading ? <Loader className="h-5 w-5 animate-spin" /> : "Pay"}
-                            
                         </button>
-                    </div>
-                  ) : "Already Paid"}
-                </td>
-                <td className="px-6 py-4 text-center">
-                  <button
-                    onClick={() => openModal(staff_claim.data)}
-                    className="text-gray-600 cursor-pointer hover:text-gray-800"
-                  >
-                    View
-                  </button>
-                </td>
-              </tr>
+                      )}
+                      <button
+                        onClick={() => openModal(claim)}
+                        className="text-gray-600 cursor-pointer hover:text-gray-800 ml-2"
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{staff_claim.data.claim_number}</td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{staff_claim.data.staff_number}</td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{staff_claim.data.full_name}</td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{formatDate(staff_claim.data.created_at)}</td>
+                  <td width={300} className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{staff_claim.data.claim_reason}</td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">
+                    Ghc{Number(staff_claim.data.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      staff_claim.data.status === "paid" ? "bg-green-100 text-green-800" :
+                      staff_claim.data.status === "pending" ? "bg-yellow-100 text-yellow-800" :
+                      "bg-gray-100 text-gray-800"
+                    }`}>
+                      {staff_claim.data.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">
+                    {staff_claim.data.status === "pending" && (
+                      <button 
+                        onClick={() => claim_payment(staff_claim.data.claim_number)} 
+                        className="bg-gray-800 cursor-pointer text-white px-3 py-1 rounded hover:bg-gray-700"
+                      >
+                        {isLoading ? <Loader className="h-5 w-5 animate-spin" /> : "Pay"}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => openModal(staff_claim.data)}
+                      className="text-gray-600 cursor-pointer hover:text-gray-800 ml-2"
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              )}
             </tbody>
+
           </table>
         </div>
       ) : staff_claim ? (
-        <div className="text-center py-8 text-gray-600">No claim details available</div>
+        <div className="text-center py-8 text-gray-600">No claim details found</div>
       ) : (
-        <div className="text-center py-8 text-gray-600">Search for a claim by Claim number</div>
+        <div className="text-center py-8 text-gray-600">search for a claim using either the request number or staff number to retrieve all claims associated with that staff member.</div>
       )}
 
       {isOpen && selectedClaim && (

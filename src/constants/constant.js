@@ -17,12 +17,12 @@ export const ClaimsNav = [
       icon: "clock",
       roles: ["accountant", "administrator", "main_administrator"],
     },
-    {
-      title: "Paid Claims",
-      path: "/claims/paid",
-      icon: "dollar-sign",
-      roles: ["accountant", "administrator", "main_administrator"],
-    },
+    // {
+    //   title: "Paid Claims",
+    //   path: "/claims/paid",
+    //   icon: "dollar-sign",
+    //   roles: ["accountant", "administrator", "main_administrator"],
+    // },
     {
       title: "Settings",
       path: "/settings",
@@ -54,12 +54,6 @@ export const ClaimsNav = [
       icon: "users",
       roles: ["administrator", "main_administrator"],
     },
-    // {
-    //   title: "Approve Claims",
-    //   path: "/admin/approve",
-    //   icon: "file-text",
-    //   roles: ["administrator", "main_administrator"],
-    // },
     {
       title: "System Logs",
       path: "/admin/system-logs",

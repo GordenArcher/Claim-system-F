@@ -7,7 +7,6 @@ import { useContext } from "react"
 import { AuthContext } from "../utils/context/AuthContextProvider"
 import Pending_claims from "../pages/accountants/Pending_claims"
 import HistoryClaims from "../pages/accountants/HistoryClaims"
-import PaidClaims from "../pages/accountants/PaidClaims"
 import Settings from "../pages/accountants/Settings"
 import PaymentHistory from "../pages/accountants/PaymentHistory"
 import NewStaffClaim from "../pages/administrators/NewStaffClaim"
@@ -37,9 +36,9 @@ const PageRoutes = () => {
 
   if(user?.data?.is_blocked){
     return (
-        <Routes>
-            <Route path="/" element={<Blocked />} />
-        </Routes>
+      <Routes>
+        <Route path="/" element={<Blocked />} />
+      </Routes>
     )
   }
 
@@ -52,7 +51,7 @@ const PageRoutes = () => {
         <Route path="/" element={<Dashboard />} />
         <Route path="/staff/claim/verify" element={<ClaimVerification />} />
         <Route path="/claims/pending" element={<Pending_claims />} />
-        <Route path="/claims/paid" element={<PaidClaims />} />
+        {/* <Route path="/claims/paid" element={<PaidClaims />} /> */}
         <Route path="/claim/new" element={<NewStaffClaim />} />
         <Route path="/settings" element={<Settings />} />
 

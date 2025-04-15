@@ -67,7 +67,7 @@ const AuditTable = () => {
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       filteredData = filteredData.filter(audit => {
-        const userName = `${audit.user.username}`.toLowerCase();
+        const userName = `${audit.user.username ? audit.user.username : audit.full_name}`.toLowerCase();
         const email = audit.user.email.toLowerCase();
         const entity = `${audit.entity_type} ${audit.entity_id}`.toLowerCase();
         const action = audit.action.toLowerCase();
@@ -91,8 +91,8 @@ const AuditTable = () => {
         
         switch (sortConfig.key) {
           case 'user':
-            aValue = `${a.user.username}`;
-            bValue = `${b.user.username}`;
+            aValue = `${a?.user?.username || a?.full_name}`;
+            bValue = `${b?.user?.username || a?.full_name}`;
             break;
           case 'action':
             aValue = a.action;
@@ -307,15 +307,15 @@ const AuditTable = () => {
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
                           <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-medium">
-                            {audit.user.username[0]}
+                            {audit.full_name ? (audit.full_name[0]) : (audit.user.username[0])}
                           </div>
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-extrabold text-gray-900">
-                            {audit.user.username}
+                            {audit.full_name ? audit.full_name : audit.user.username}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {audit.user.email}
+                            {audit?.user?.email ? audit?.user?.email : null}
                           </div>
                         </div>
                       </div>

@@ -120,7 +120,7 @@ export const LogDetailModal = ({ log, onClose }) => {
             <span className="text-gray-800 flex flex-col gap-1 mt-6">
                 <span>Copy the Claim Number to look it up</span>
                 <Link to={'/staff/claim/verify/'} className="underline text-blue-700">look it up here</Link>
-            </span>
+            </span> 
         </motion.div>
     </>
   );

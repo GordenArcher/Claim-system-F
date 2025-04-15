@@ -33,7 +33,7 @@ const NavBar = () => {
                   {isLoadingUser ? (
                     <div className="animate-pulse w-[200px] h-10 bg-gray-200 rounded"></div>
                   ) : (
-                    <h5 className="capitalize">{`${getGreeting()}  ${user.data?.username}`}</h5>
+                    <h5 className="capitalize">{`${getGreeting()}  ${user.data?.employee?.username}`}</h5>
                   )}
                 </div>
                 <div>

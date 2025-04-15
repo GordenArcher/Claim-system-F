@@ -29,7 +29,8 @@ const ClaimsTable = ({ claimsHistory, openModal }) => {
       const searchTermLower = searchTerm.toLowerCase();
       result = result.filter(claim => 
         claim.claim_number.toLowerCase().includes(searchTermLower) ||
-        claim.staff?.employee?.username.toLowerCase().includes(searchTermLower) ||
+        claim.staff_number.toLowerCase().includes(searchTermLower) ||
+        claim.full_name.toLowerCase().includes(searchTermLower) ||
         claim.claim_reason.toLowerCase().includes(searchTermLower)
       );
     }
@@ -91,13 +92,14 @@ const ClaimsTable = ({ claimsHistory, openModal }) => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Claim ID</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request Number</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Number</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Name</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Posting Date</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request Reason</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Claim Amount</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request Status</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
             </tr>
           </thead>
 
@@ -106,10 +108,14 @@ const ClaimsTable = ({ claimsHistory, openModal }) => {
               paginatedClaims.map((claim, index) => (
                 <tr key={index} className="hover:bg-gray-50">
                   <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{claim.claim_number}</td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{claim.staff_number}</td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
-                    {claim.staff?.employee?.username}
+                    {claim?.full_name}
                   </td>
-                  <td width={500} className="px-2 py-3 whitespace-nowrap text-sm text-gray-800">{claim.claim_reason}</td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                    {new Date(claim.payment_date).toLocaleDateString()}
+                  </td>
+                  <td width={300} className="px-2 py-3 whitespace-nowrap text-sm text-gray-800">{claim.claim_reason}</td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800">&#x20B5;{claim.amount}</td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs rounded-full`}>
@@ -119,14 +125,9 @@ const ClaimsTable = ({ claimsHistory, openModal }) => {
                       </span>
                     </span>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(claim.payment_date).toLocaleDateString()}
-                  </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm">
                     <div className="flex gap-1">
                       <button onClick={() => openModal(claim)} className="text-gray-600 cursor-pointer hover:text-gray-800">View</button>
-                      {/* <span className="text-gray-300">|</span>
-                      <button className="text-gray-600 hover:text-gray-800">Edit</button> */}
                     </div>
                   </td>
                 </tr>

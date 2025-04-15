@@ -8,20 +8,22 @@ const Verify_Claim = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const get_Claim = async (claim_id) => {
-    if (!claim_id) return toast.error("Claim ID is required");
+  const get_Claim = async (claim_data) => {
+    if (!claim_data) return toast.error("No claim_data provided.");
     
     setError(null);
     setStaff_claim(null);
     setLoading(true);
     
     try {
-      const response = await fetch(`${BASE_URL}/claim/verify/${claim_id}/`, {
-        method: "GET",
+      const response = await fetch(`${BASE_URL}/claim/verify/`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
+          'X-CSRFToken': localStorage.getItem("csrf"),
         },
         credentials: "include",
+        body: JSON.stringify({"claim_data": claim_data})
       });
 
       
@@ -33,7 +35,6 @@ const Verify_Claim = () => {
         const errorData = await response.json();
         const errorMessage = typeof errorData === 'string' ? errorData : errorData.detail || errorData.message || "Failed to retrieve claim information";
         setError(errorMessage);
-        toast.error(errorMessage);
       }
     } catch (err) {
       console.error("API call error:", err);

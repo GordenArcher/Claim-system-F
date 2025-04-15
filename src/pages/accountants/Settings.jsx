@@ -28,8 +28,8 @@ const Settings = () => {
   useEffect(() => {
     if (user) {
       setProfileData({
-        username: user.data.username || "",
-        email: user.data.email || "",
+        username: user.data.employee.username || "",
+        email: user.data.employee.email || "",
         phoneNumber: user.data.phone_number || ""
       });
     }
@@ -57,8 +57,11 @@ const Settings = () => {
   const { isChangingPassword, change_password } = ChangePassword()
 
   const copy_staffID = () => {
-    navigator.clipboard.writeText(user.data.staff_id);
-    toast.success("Staff ID Copied!")
+    if(user.data.staff_number){
+        navigator.clipboard.writeText(user.data.staff_number);
+        toast.success("Staff ID Copied!")
+    }
+    
   };
 
   return (
@@ -128,7 +131,7 @@ const Settings = () => {
                                         <input
                                         type="text"
                                         disabled
-                                        value={user.data.staff_id}
+                                        value={user.data.staff_number}
                                         className="w-full px-3 py-2 focus:outline-none"
                                         />
                                         <button type="button" onClick={copy_staffID} className="p-3 cursor-pointer hover:bg-gray-300 rounded-xl">
@@ -138,7 +141,7 @@ const Settings = () => {
                                 </div>
                             </div>
                             <div className="mt-6">
-                                <button onClick={() => profileChange(profileData)} type="button" disabled={isSettingProfile} className="flex cursor-pointer items-center justify-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none">
+                                <button onClick={() => profileChange(profileData)} type="button" disabled={isSettingProfile} className={`flex ${isSettingProfile ? 'cursor-not-allowed' : 'cursor-pointer'} items-center justify-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none`}>
                                     {isSettingProfile ? (
                                     <>
                                         <Loader size={16} className="animate-spin" />
