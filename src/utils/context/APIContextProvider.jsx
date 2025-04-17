@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react"
+import { createContext, useEffect, useMemo, useState } from "react"
 import Get_pending_claims from "../../api/Get_pending_claims"
 import Get_all_claims from "../../api/Get_all_claims"
 import Get_Payment_History from "../../api/Get_Payment_History"
@@ -10,65 +10,56 @@ import Get_audit from "../../api/Get_auditTrials"
 import { Get_users_logs } from "../../api/Get_staff_logs"
 import { Get_Claim_Status } from "../../api/Get_staff_processes"
 
-
 export const APIContext = createContext()
 
-const APIContextProvider = ({children}) => {
-  const [user, setUser] = useState([])
+const APIContextProvider = ({ children }) => {
+  const [user, setUser] = useState([]) 
   const [allUsers, setAllUsers] = useState([])
   const [pendingClaims, setPendingClaims] = useState([])
-  const [claimsHistory, setClaimsHistory] = useState([])
-  const [RecentClaims, setRecentClaims] = useState([])
-  const [payHistory, setPayHistory] = useState([])
-  const [reportSummery, setReportSummery] = useState([])
-  const [auditTrails, setAuditTrails] = useState([])
-  const [logsSystem, setLogsSystem] = useState([])
-  const [claimStatusData, getClaimStatusData] = useState([])
-  
+  const [claimStatusData, setClaimStatusData] = useState([])
 
   const { userData, isLoadingUser } = Get_User()
-  const { data } = Get_pending_claims()
-  const { allClaims } = Get_all_claims()
+  const { data: pendingData } = Get_pending_claims()
+  const { allClaims,  } = Get_all_claims()
   const { recentClaims } = Get_recent_claims()
-  const { paymentHistory } = Get_Payment_History()
+  const { paymentHistory} = Get_Payment_History()
   const { users, isGettingUsers } = Get_all_users()
   const { summeryReports } = Get_report_summery()
   const { allAudit } = Get_audit()
   const { systemLogs } = Get_users_logs()
-  const { claimStatus } = Get_Claim_Status()
-  
+  const { claimStatus} = Get_Claim_Status()
 
   useEffect(() => {
-    setPendingClaims(data)
-    setClaimsHistory(allClaims)
-    setRecentClaims(recentClaims)
-    setPayHistory(paymentHistory)
-    setUser(userData)
-    setAllUsers(users)
-    setReportSummery(summeryReports)
-    setAuditTrails(allAudit)
-    setLogsSystem(systemLogs)
-    getClaimStatusData(claimStatus)
-  }, [data, allClaims, paymentHistory, userData, users, recentClaims, summeryReports, allAudit, systemLogs, claimStatus])
+    if (pendingData) setPendingClaims(pendingData)
+    if (userData) setUser(userData)
+    if (users) setAllUsers(users)
+    if (claimStatus) setClaimStatusData(claimStatus)
+  }, [pendingData, userData, users, claimStatus])
 
-
-  return (
-    <APIContext.Provider value={{setPendingClaims, 
-    pendingClaims, 
-    claimsHistory, 
-    RecentClaims,
-    payHistory,
+  const contextValue = useMemo(() => ({
+    pendingClaims,
+    setPendingClaims,
+    claimsHistory: allClaims || [],
+    RecentClaims: recentClaims || [],
+    payHistory: paymentHistory || [],
     user,
-    isLoadingUser,
     setUser,
+    isLoadingUser,
     allUsers,
     setAllUsers,
     isGettingUsers,
-    reportSummery,
-    auditTrails,
-    logsSystem,
+    reportSummery: summeryReports || [],
+    auditTrails: allAudit || [],
+    logsSystem: systemLogs || [],
     claimStatusData,
-    }}>
+  }), [
+    pendingClaims, allClaims, recentClaims, paymentHistory,
+    user, isLoadingUser, allUsers, isGettingUsers,
+    summeryReports, allAudit, systemLogs, claimStatusData
+  ])
+
+  return (
+    <APIContext.Provider value={contextValue}>
       {children}
     </APIContext.Provider>
   )

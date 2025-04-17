@@ -15,7 +15,7 @@ const Get_recent_claims = () => {
 
             setLoading(true);
             try {
-            const response = await fetch(`${BASE_URL}/all_claims/`, {
+            const response = await fetch(`${BASE_URL}/recent_claim/`, {
                 method: "GET",
                 headers: {
                 "Content-Type": "application/json",

@@ -7,6 +7,7 @@ const AuthContextProvider = ({children}) => {
     
 
     const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const [isLoadingAuth, setIsLoadingAuth] = useState(false)
 
 
 
@@ -55,6 +56,7 @@ const AuthContextProvider = ({children}) => {
       
       useEffect(() => {
         const getAuthenticated = async () => {
+          setIsLoadingAuth(true)
           try {
             const response = await fetch(`${url}/auth/isAuthenticated/`, {
               method: 'GET',
@@ -69,6 +71,8 @@ const AuthContextProvider = ({children}) => {
             }
           } catch (error) {
             await call_refresh(error, getAuthenticated);
+          }finally{
+            setIsLoadingAuth(false)
           }
         };
       
@@ -95,7 +99,7 @@ const AuthContextProvider = ({children}) => {
       fetchCsrfToken()
 
   return (
-    <AuthContext.Provider value={{isAuthenticated, setIsAuthenticated}}>
+    <AuthContext.Provider value={{isAuthenticated, setIsAuthenticated, isLoadingAuth}}>
         {children}
     </AuthContext.Provider>
   )

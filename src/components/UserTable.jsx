@@ -32,7 +32,7 @@ const UserTable = ({ onBlockUser, onDeleteUser, confirmAction, isBlocking, isDel
     try {
        const response = await onDeleteUser(userId); 
        if(response){
-        setAllUsers((prev) => prev.filter((u) => u.staff_id !== userId));
+        setAllUsers((prev) => prev.filter((u) => u.staff_number !== userId));
        }
     } catch (error) {
         console.log(error)
@@ -120,7 +120,7 @@ const UserTable = ({ onBlockUser, onDeleteUser, confirmAction, isBlocking, isDel
               <th className="p-4">Full Name</th>
               <th className="p-4">Email</th>
               <th className="p-4">Phone Number</th>
-              <th className="p-4">Staff ID</th>
+              <th className="p-4">Staff Number</th>
               <th className="p-4">Role</th>
               <th className="p-4">Actions</th>
             </tr>
@@ -132,16 +132,16 @@ const UserTable = ({ onBlockUser, onDeleteUser, confirmAction, isBlocking, isDel
             <tbody>
               {filteredUsers?.filter((u) => u.role !== "main_administrator" || user.data.role !== "administrator")
                 .map((user) => (
-                  <tr key={user.staff_id} className="hover:bg-gray-50">
+                  <tr key={user.staff_number} className="hover:bg-gray-50">
                     <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.employee.username}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.employee.email}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.phone_number}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.staff_id}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">{user.staff_number}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600 capitalize">{user.role}</td>
                     <td className="p-4 flex gap-2 px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-600">
                     
                         {user.is_blocked ? (
-                          <button onClick={() => unblockuser(user.staff_id)} className="p-2 cursor-pointer flex items-center gap-2 transition-all text-red-500">
+                          <button onClick={() => unblockuser(user.staff_number)} className="p-2 cursor-pointer flex items-center gap-2 transition-all text-red-500">
                             <div className="flex items-center gap-1">
                                 {isUnBlocking ? (
                                     <Loader className="animate-spin" />
@@ -155,9 +155,9 @@ const UserTable = ({ onBlockUser, onDeleteUser, confirmAction, isBlocking, isDel
                           </button>
                         ) : (
                           <div>
-                            {isBlocking && confirmAction?.userId === user.staff_id && confirmAction?.type === 'block' ? 
+                            {isBlocking && confirmAction?.userId === user.staff_number && confirmAction?.type === 'block' ? 
                               <Loader className="animate-spin h-4 w-4" /> : 
-                              <button onClick={() => handleBlockUser(user.staff_id)} className="p-2 cursor-pointer flex items-center gap-2 transition-all text-red-500 hover:text-red-600">
+                              <button onClick={() => handleBlockUser(user.staff_number)} className="p-2 cursor-pointer flex items-center gap-2 transition-all text-red-500 hover:text-red-600">
                                 <div className="flex items-center gap-1">
                                     <Lock className="h-4 w-4" /> 
                                     <span>Block</span>
@@ -168,7 +168,7 @@ const UserTable = ({ onBlockUser, onDeleteUser, confirmAction, isBlocking, isDel
                         )}
 
                         <button
-                            onClick={() => handleDeleteUser(user.staff_id)}
+                            onClick={() => handleDeleteUser(user.staff_number)}
                             className={`p-2 cursor-pointer flex items-center gap-2 transition-all text-red-500 hover:text-red-600`}
                             disabled={isDeletingUser}
                         >

@@ -39,7 +39,6 @@ const HistoryClaims = () => {
 
     const filteredClaims = useMemo(() => {
         return claimsHistory.data?.filter(claim => {
-            // Text search filter
             const matchesSearch = 
                 claim.claim_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 claim.staff_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -47,7 +46,6 @@ const HistoryClaims = () => {
                 claim?.claim_reason?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 claim?.amount?.toString().includes(searchTerm.toLowerCase());
             
-            // Month filter
             let matchesMonth = true;
             if (selectedMonth) {
               const claimDate = new Date(claim.created_at);

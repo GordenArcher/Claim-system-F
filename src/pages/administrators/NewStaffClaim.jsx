@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker';
 import { formatISO } from 'date-fns';
 import { Loader } from 'lucide-react';
 import ErrorNotification from '../../components/ErrorNotification';
+import { Typewriter } from 'react-simple-typewriter';
 
 const StaffClaim = () => {
   const BASE_URL = import.meta.env.VITE_BACKEND_URL;
@@ -19,6 +20,7 @@ const StaffClaim = () => {
     phone_number: '',
     claim_amount: '',
     claim_reason: '',
+    payment_date : ''
   });
 
   const handleChange = (e) => {
@@ -27,7 +29,7 @@ const StaffClaim = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     setIsSubmitting(true)
 
     try {
@@ -50,7 +52,8 @@ const StaffClaim = () => {
           phone_number : '',
           employee_number : '',
           request_number : '',
-          claim_reason : ''
+          claim_reason : '',
+          payment_date : ''
         });
         location.reload()
       } else {
@@ -87,7 +90,17 @@ const StaffClaim = () => {
       */}
       
       <div className="p-1 max-w-lg mx-auto">
-      <h3 className="text-xl font-black text-gray-900 mb-4">Submit a New Claim</h3>
+      <h2 className="text-center text-2xl font-bold text-black">
+      <Typewriter
+        words={['Submit a New Claim']}
+        loop={true}
+        cursor
+        cursorStyle="."
+        typeSpeed={100}
+        deleteSpeed={70}
+      />
+        
+      </h2>
       <p className="text-sm text-gray-500 mb-4">Please cross check the information before submitting</p>
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg space-y-4">
         <div className="space-y-1">
@@ -154,6 +167,32 @@ const StaffClaim = () => {
             className="p-3 border border-gray-300 rounded w-full outline-none focus:ring focus:ring-gray-200"
           />
         </div>
+
+        <div className="space-y-1 flex gap-3">
+          {["pending", "paid"].map((roleOption) => (
+            <div key={roleOption}>
+              <input className="peer hidden" type="radio" id={roleOption} name="status" value={roleOption} onChange={handleChange} />
+              <label htmlFor={roleOption} className="flex cursor-pointer items-center justify-center rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 peer-checked:border-gray-500 peer-checked:bg-gray-500 peer-checked:text-white">
+                {roleOption}
+              </label>
+            </div>
+          ))}
+        </div>
+
+        {formData.status === 'paid' && (
+         <div className="space-y-1">
+          <label htmlFor="claim_amount" className="block text-sm font-medium text-gray-700">Payment Date</label>
+          <DatePicker 
+            id="claim_amount"
+            name="payment_date" 
+            dateFormat="yyyy-MM-dd"
+            selected={formData.payment_date}
+            onChange={(date) => setFormData((prevData) => ({...prevData, payment_date: formatISO(date)}))}
+            required 
+            className="p-3 border border-gray-300 rounded w-full outline-none focus:ring focus:ring-gray-200"
+          />
+        </div> 
+        )}
 
         <div className="space-y-1">
           <label htmlFor="claim_amount" className="block text-sm font-medium text-gray-700">Claim Amount</label>

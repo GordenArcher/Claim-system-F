@@ -50,25 +50,15 @@ const AdminDashboard = () => {
 
     const formatDate = (dateString) => {
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+      return date.toLocaleString();
   };
 
   const getStatusIcon = (status) => {
     switch(status) {
       case 'pending':
         return <Clock className="h-5 w-5 text-yellow-500" />;
-      case 'approved':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'rejected':
-        return <XCircle className="h-5 w-5 text-red-500" />;
       case 'paid':
-        return <CheckCheck className="h-5 w-5 text-orange-500" />;
+        return <CheckCheck className="h-5 w-5 text-green-500" />;
       default:
         return null;
     }
@@ -78,10 +68,6 @@ const AdminDashboard = () => {
     switch(status) {
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
-      case 'approved':
-        return 'bg-green-100 text-green-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
       case 'paid':
         return 'bg-green-100 text-green-800';
       default:
@@ -97,7 +83,7 @@ const AdminDashboard = () => {
 
 
   return (
-    <div className="p-6 max-w-full bg-gray-50 min-h-screen">
+    <div className="p-4 max-w-full bg-gray-50 min-h-screen">
         <Back />
       <div className="flex justify-between items-center mb-8 bg-gray-900 text-white p-4 font-semibold rounded-sm text-lg">
         <h1 className="text-2xl font-bold text-white">Admin Management Dashboard</h1>

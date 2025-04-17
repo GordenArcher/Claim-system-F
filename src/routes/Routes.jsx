@@ -17,10 +17,16 @@ import AdminDashboard from "../pages/administrators/AdminDashboard"
 import UserManagement from "../pages/administrators/UserManagement"
 import AuditTrail from "../pages/MainAdmin/AuditTrail"
 import SytemLogs from "../pages/administrators/SytemLogs"
+import Loader from '../components/PageLoader'
 
 const PageRoutes = () => {
-  const { isAuthenticated } = useContext(AuthContext)
+  const { isAuthenticated, isLoadingAuth } = useContext(AuthContext)
   const { user } = useContext(APIContext)
+
+
+  if(isLoadingAuth){
+    return <Loader />
+  }
 
   if (!isAuthenticated) {
     return (
@@ -47,15 +53,11 @@ const PageRoutes = () => {
         <NavBar />
 
         <Routes>
-        {/* Common routes for all roles */}
         <Route path="/" element={<Dashboard />} />
         <Route path="/staff/claim/verify" element={<ClaimVerification />} />
         <Route path="/claims/pending" element={<Pending_claims />} />
-        {/* <Route path="/claims/paid" element={<PaidClaims />} /> */}
         <Route path="/claim/new" element={<NewStaffClaim />} />
         <Route path="/settings" element={<Settings />} />
-
-        {/* Routes for Administrators and Higher */}
         {(role === 'administrator' || role === 'main_administrator') && (
             <>
                 <Route path="/payments/history" element={<PaymentHistory />} />
@@ -66,14 +68,12 @@ const PageRoutes = () => {
             </>
         )}
 
-        {/* Routes for Main Administrators Only */}
         {role === 'main_administrator' && (
             <>
                 <Route path="/main-admin/audit-trail" element={<AuditTrail />} />
             </>
         )}
 
-        {/* Catch-all Redirect */}
         <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     </>

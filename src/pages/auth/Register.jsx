@@ -12,6 +12,7 @@ const Register = () => {
   const [registerData, setRegisterData] = useState({
     full_name: "",
     email: "",
+    staff_number: "",
     phone_number: "",
     role: "",
     password: "",
@@ -26,7 +27,7 @@ const Register = () => {
   const registerUser = async (e) => {
     e.preventDefault();
 
-    if(!registerData.full_name || !registerData.email || !registerData.phone_number || !registerData.password || !registerData.password2) return toast.error("All fields are required")
+    if(!registerData.full_name || !registerData.email || !registerData.staff_number || !registerData.phone_number || !registerData.password || !registerData.password2) return toast.error("All fields are required")
 
     if(!registerData.password !== !registerData.password2) return toast.error("password does not match")
 
@@ -43,6 +44,7 @@ const Register = () => {
           full_name: registerData.full_name,
           email: registerData.email,
           phone_number: registerData.phone_number,
+          staff_number: registerData.staff_number,
           role: registerData.role || "accountant",
           password: registerData.password,
           password2: registerData.password2,
@@ -51,6 +53,7 @@ const Register = () => {
       if(response.ok){
         const data = await response.json()
         toast.success(data.message)
+        location.reload()
       }
       else{
         const errorData = await response.json()
@@ -66,10 +69,14 @@ const Register = () => {
 
   const availableRoles = role === 'administrator'
   ? [{ id: "accountant", label: "Accountant" }]
-  : [
-      { id: "accountant", label: "Accountant" },
-      { id: "administrator", label: "Administrator" }
-    ];
+  : role === 'main_administrator' ? [
+    { id: "accountant", label: "Accountant" },
+    { id: "administrator", label: "Administrator" },
+    { id: "main_administrator", label: "Main administrator" },
+  ] : [
+    { id: "accountant", label: "Accountant" },
+    { id: "administrator", label: "Administrator" }
+  ];
 
   return (
     <div className="w-full">
@@ -96,6 +103,18 @@ const Register = () => {
                   value={registerData.full_name}
                   name="full_name"
                   onChange={(e) => setRegisterData((prev) => ({ ...prev, full_name: e.target.value }))}
+                  className={`mt-2 flex h-10 w-full rounded-md border outline-none px-3 py-2 text-sm focus:ring-1 border-gray-300`}
+                />
+              </div>
+
+              <div >
+                <label className="text-base font-medium text-gray-900">Staff Number</label>
+                <input
+                  type="text"
+                  placeholder={"123456789"}
+                  value={registerData.staff_number}
+                  name="staff_number"
+                  onChange={(e) => setRegisterData((prev) => ({ ...prev, staff_number: e.target.value }))}
                   className={`mt-2 flex h-10 w-full rounded-md border outline-none px-3 py-2 text-sm focus:ring-1 border-gray-300`}
                 />
               </div>
