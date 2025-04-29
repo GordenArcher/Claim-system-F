@@ -6,7 +6,7 @@ export const ClaimsNav = [
       roles: ["accountant", "administrator", "main_administrator"],
     },
     {
-        title: "Create Claim",
+        title: "Upload Claim",
         path: "/claim/new",
         icon: "plus-circle",
         roles: ["accountant", "administrator", "main_administrator"],
