@@ -1,244 +1,195 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { toast } from 'react-toastify';
 import Back from '../../components/Back';
-import DatePicker from 'react-datepicker';
-import { formatISO } from 'date-fns';
-import { Loader } from 'lucide-react';
+import { Loader, Upload, File, X } from 'lucide-react';
 import ErrorNotification from '../../components/ErrorNotification';
-import { Typewriter } from 'react-simple-typewriter';
+import axios from 'axios';
+import { APIContext } from '../../utils/context/APIContextProvider';
 
 const StaffClaim = () => {
   const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [file, setFile] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef(null);
   const [duplicateError, setDuplicateError] = useState(null);
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formData, setFormData] = useState({
-    request_number: '',
-    employee_number: '',
-    full_name: '',
-    posting_date: '',
-    phone_number: '',
-    claim_amount: '',
-    claim_reason: '',
-    payment_date : ''
-  });
+  const { setclaimsHistory } = useContext(APIContext)
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const re_fetch_claims = async () => {
+    const response = await axios.get(`${BASE_URL}/all_claims/`, {withCredentials: true})
+    if(response){
+      const data = response?.data
+      setclaimsHistory(data.data)
+    }
+  }
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      setFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const removeFile = () => {
+    setFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!file) return toast.error("Please upload an Excel file.");
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
+
+    const formData = new FormData();
+    formData.append('file', file);
 
     try {
-      const response = await fetch(`${BASE_URL}/create_claim/`, {
-        method: "POST",
+      const response = await fetch(`${BASE_URL}/upload_claim/`, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          'X-CSRFToken': localStorage.getItem("csrf"),
+          'X-CSRFToken': localStorage.getItem('csrf'),
         },
-        body: JSON.stringify(formData),
-        credentials: "include",
+        body: formData,
+        credentials: 'include',
       });
+
       if (response.ok) {
-        const data = await response.json()
-        toast.success(data.message)
-        setFormData({
-          claim_amount: '',
-          full_name : '',
-          posting_date : '',
-          phone_number : '',
-          employee_number : '',
-          request_number : '',
-          claim_reason : '',
-          payment_date : ''
-        });
-        location.reload()
+        const data = await response.json();
+        toast.success(data.message);
+
+        
+        setFile(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+
+        if (data.duplicates && data.duplicates.length > 0) {
+          setDuplicateError({
+            message: `${data.duplicates.length} duplicate claim(s) found`,
+            claims: data?.duplicates,
+          });
+        }
+        await re_fetch_claims()
+
       } else {
         const errorData = await response.json();
-
-        if(errorData.type == "duplicate"){
-          setDuplicateError(errorData);
-          <ErrorNotification errorData={errorData} />
-        }else{
-          toast.error(`${errorData.message || "Something went wrong"}`);
-        }
-        
+        toast.error(errorData.message || 'Something went wrong');
       }
     } catch (error) {
-      console.error("Error submitting claim:", error);
-      toast.error("Failed to submit claim. Please try again.");
-    }finally{
-      setIsSubmitting(false)
+      console.error('Error uploading claim:', error);
+      toast.error('Failed to upload the claim. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const dismissErrorNotification = () => {
-    setDuplicateError(null);
-  };
-
   return (
-    <div className='p-5'>
+    <div className="p-8">
+      <Back />
+      <div className="max-w-2xl mx-auto mt-8 bg-white rounded-lg shadow p-6">
+        <h1 className="text-2xl font-bold mb-2">Upload Excel File</h1>
+        <p className="text-gray-600 mb-6">Please upload the Excel file for the claim submission</p>
 
-    <Back />
-      {/* 
-        <div className="bg-gray-900 text-white p-4 rounded-lg font-semibold text-lg mb-5">
-          Submit a Staff Claim
-        </div> 
-      */}
-      
-      <div className="p-1 max-w-lg mx-auto">
-      <h2 className="text-center text-2xl font-bold text-black">
-      <Typewriter
-        words={['Submit a New Claim']}
-        loop={true}
-        cursor
-        cursorStyle="."
-        typeSpeed={100}
-        deleteSpeed={70}
-      />
-        
-      </h2>
-      <p className="text-sm text-gray-500 mb-4">Please cross check the information before submitting</p>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg space-y-4">
-        <div className="space-y-1">
-          <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">Full Name</label>
-          <input 
-            type="text" 
-            id="full_name"
-            name="full_name" 
-            value={formData.full_name} 
-            onChange={handleChange} 
-            required 
-            className="p-3 border border-gray-300 rounded w-full outline-none focus:ring focus:ring-gray-200"
-          />
-        </div>
-          
-        <div className="space-y-1">
-          <label htmlFor="employee_number" className="block text-sm font-medium text-gray-700">Employee Number</label>
-          <input 
-            type="text" 
-            id="employee_number"
-            name="employee_number" 
-            value={formData.employee_number} 
-            onChange={handleChange} 
-            required 
-            className="p-3 border border-gray-300 rounded w-full outline-none focus:ring focus:ring-gray-200"
-          />
-        </div>
-          
-        <div className="space-y-1">
-          <label htmlFor="request_number" className="block text-sm font-medium text-gray-700">Request Number</label>
-          <input 
-            type="text" 
-            id="request_number"
-            name="request_number" 
-            value={formData.request_number} 
-            onChange={handleChange} 
-            required 
-            className="p-3 border border-gray-300 rounded w-full outline-none focus:ring focus:ring-gray-200"
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div 
+            className={`border-2 border-dashed rounded-lg p-8 mb-6 text-center cursor-pointer transition-colors ${
+              isDragging ? 'border-gray-900 bg-blue-50' : 'border-gray-300 hover:border-gray-900'
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current && fileInputRef.current.click()}
+          >
+            <input 
+              type="file"
+              name='file'
+              onChange={handleFileChange}
+              ref={fileInputRef}
+              accept=".xlsx,.xls"
+              className="hidden"
+            />
+            
+            {file ? (
+              <div className="flex items-center justify-center gap-3 flex-wrap">
+                <div className="flex items-center bg-gray-100 rounded-lg p-3 pr-4 max-w-full">
+                  <File className="h-5 w-5 text-gray-900 mr-2" />
+                  <span className="text-sm font-medium truncate max-w-xs">{file.name}</span>
+                  <button 
+                  type="button" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeFile();
+                    }}
+                    className="ml-2 text-gray-500 cursor-pointer hover:text-red-500"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <Upload className="h-10 w-10 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-600 mb-1">
+                  <span className="font-medium text-gray-900">Click to upload</span> or drag and drop
+                </p>
+                <p className="text-gray-500 text-sm">Excel files only (.xlsx, .xls)</p>
+              </div>
+            )}
+          </div>
 
-        <div className="space-y-1">
-          <label htmlFor="employee_email" className="block text-sm font-medium text-gray-700">Posting Date</label>
-          <DatePicker 
-            required
-            onChange={(date) => setFormData((prevData) => ({...prevData, posting_date: formatISO(date)}))}
-            dateFormat="yyyy-MM-dd"
-            selected={formData.posting_date}
-            id="employee_email"
-            name="posting_date"
-            className="p-3 border border-gray-300 rounded w-full outline-none focus:ring focus:ring-gray-200"
-          />
-        </div>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={isSubmitting || !file}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg ${
+                isSubmitting || !file 
+                  ? 'bg-gray-300 cursor-not-allowed text-gray-500' 
+                  : 'bg-gray-900 cursor-pointer hover:bg-gray-700 text-white'
+              }`}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader className="h-4 w-4 animate-spin" />
+                  <span>Uploading...</span>
+                </>
+              ) : (
+                'Upload'
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
 
-        <div className="space-y-1">
-          <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700">Phone Number</label>
-          <input 
-            type="tel" 
-            id="phone_number"
-            name="phone_number" 
-            value={formData.phone_number} 
-            onChange={handleChange} 
-            required 
-            className="p-3 border border-gray-300 rounded w-full outline-none focus:ring focus:ring-gray-200"
-          />
-        </div>
-
-        <div className="space-y-1 flex gap-3">
-          {["pending", "paid"].map((roleOption) => (
-            <div key={roleOption}>
-              <input className="peer hidden" type="radio" id={roleOption} name="status" value={roleOption} onChange={handleChange} />
-              <label htmlFor={roleOption} className="flex cursor-pointer items-center justify-center rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 peer-checked:border-gray-500 peer-checked:bg-gray-500 peer-checked:text-white">
-                {roleOption}
-              </label>
-            </div>
-          ))}
-        </div>
-
-        {formData.status === 'paid' && (
-         <div className="space-y-1">
-          <label htmlFor="claim_amount" className="block text-sm font-medium text-gray-700">Payment Date</label>
-          <DatePicker 
-            id="claim_amount"
-            name="payment_date" 
-            dateFormat="yyyy-MM-dd"
-            selected={formData.payment_date}
-            onChange={(date) => setFormData((prevData) => ({...prevData, payment_date: formatISO(date)}))}
-            required 
-            className="p-3 border border-gray-300 rounded w-full outline-none focus:ring focus:ring-gray-200"
-          />
-        </div> 
-        )}
-
-        <div className="space-y-1">
-          <label htmlFor="claim_amount" className="block text-sm font-medium text-gray-700">Claim Amount</label>
-          <input 
-            type="number" 
-            id="claim_amount"
-            name="claim_amount" 
-            value={formData.claim_amount} 
-            onChange={handleChange} 
-            required 
-            className="p-3 border border-gray-300 rounded w-full outline-none focus:ring focus:ring-gray-200"
-          />
-        </div>
-
-        <div className="space-y-1">
-          <label htmlFor="claim_reason" className="block text-sm font-medium text-gray-700">Claim Reason</label>
-          <textarea 
-            id="claim_reason"
-            name="claim_reason" 
-            value={formData.claim_reason} 
-            onChange={handleChange} 
-            required 
-            className="p-3 border border-gray-300 rounded outline-none resize-none w-full h-24 focus:ring focus:ring-gray-200"
-          />
-        </div>
-
-        <button type="submit" className="bg-gray-800 cursor-pointer text-white px-6 py-3 rounded w-full hover:bg-gray-700 transition shadow-md">
-          {isSubmitting ? (
-            <div className='flex items-center justify-center gap-2'>
-              <Loader className='size-5 animate-spin' />
-              <span>Submitting...</span>
-            </div>
-          ) : "Submit"}
-        </button>
-      </form>
+      {duplicateError && (
+        <ErrorNotification
+          errorData={duplicateError}
+          onDismiss={() => setDuplicateError(null)}
+        />
+      )}
     </div>
-
-    {duplicateError && (
-      <ErrorNotification 
-        errorData={duplicateError} 
-        onDismiss={dismissErrorNotification} 
-      />
-    )}
-
-  </div>
-    
   );
 };
 

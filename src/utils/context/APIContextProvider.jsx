@@ -16,6 +16,7 @@ const APIContextProvider = ({ children }) => {
   const [user, setUser] = useState([]) 
   const [allUsers, setAllUsers] = useState([])
   const [pendingClaims, setPendingClaims] = useState([])
+  const [claimsHistory, setclaimsHistory] = useState([])
   const [claimStatusData, setClaimStatusData] = useState([])
 
   const { userData, isLoadingUser } = Get_User()
@@ -34,12 +35,14 @@ const APIContextProvider = ({ children }) => {
     if (userData) setUser(userData)
     if (users) setAllUsers(users)
     if (claimStatus) setClaimStatusData(claimStatus)
-  }, [pendingData, userData, users, claimStatus])
+    if (allClaims) setclaimsHistory(allClaims)
+  }, [pendingData, userData, users, claimStatus, allClaims])
 
   const contextValue = useMemo(() => ({
     pendingClaims,
     setPendingClaims,
-    claimsHistory: allClaims || [],
+    claimsHistory,
+    setclaimsHistory,
     RecentClaims: recentClaims || [],
     payHistory: paymentHistory || [],
     user,
@@ -53,7 +56,7 @@ const APIContextProvider = ({ children }) => {
     logsSystem: systemLogs || [],
     claimStatusData,
   }), [
-    pendingClaims, allClaims, recentClaims, paymentHistory,
+    pendingClaims, claimsHistory, recentClaims, paymentHistory,
     user, isLoadingUser, allUsers, isGettingUsers,
     summeryReports, allAudit, systemLogs, claimStatusData
   ])
