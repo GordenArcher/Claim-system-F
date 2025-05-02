@@ -4,12 +4,10 @@ import { Link } from "react-router-dom";
 
 export const LogDetailModal = ({ log, onClose }) => {
   const parseFullLogDetails = (logInput) => {
-    // If logInput is already an object with parsed details, return it
     if (typeof logInput === 'object' && logInput !== null) {
       return logInput;
     }
 
-    // If logInput is a string, parse it
     if (typeof logInput === 'string') {
       const regex = /^\[(.*?)\] (\w+) \| (\w+) \| (.*)$/;
       const match = logInput.match(regex);
@@ -116,11 +114,6 @@ export const LogDetailModal = ({ log, onClose }) => {
                 </div>
 
             </div>
-
-            <span className="text-gray-800 flex flex-col gap-1 mt-6">
-                <span>Copy the Claim Number to look it up</span>
-                <Link to={'/staff/claim/verify/'} className="underline text-blue-700">look it up here</Link>
-            </span> 
         </motion.div>
     </>
   );

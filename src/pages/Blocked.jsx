@@ -23,7 +23,7 @@ const Blocked = () => {
           
           <p className="text-gray-600 mb-6">
             Please contact the system administrator to request access authorization. 
-            Be sure to include your username and department in your communication.
+            Be sure to include your username in your communication.
           </p>
           
           {/* <div className="space-y-4">

@@ -32,7 +32,6 @@ const AuditView = ({ selectedClaim, closeModal, formatDate, renderChanges }) => 
         exit={{ opacity: 0, y: 20 }}
         transition={{ type: "spring", damping: 30, stiffness: 400 }}
       >
-        {/* Header with gradient */}
         <div className="bg-gradient-to-r from-slate-400 to-gray-500 p-5">
           <div className="flex justify-between items-center">
             <div>
@@ -47,7 +46,6 @@ const AuditView = ({ selectedClaim, closeModal, formatDate, renderChanges }) => 
           </div>
         </div>
 
-        {/* User info section */}
         <div className="px-5 py-4 border-b border-gray-100">
           <div className="flex items-center space-x-3">
             <div className="h-10 w-10 rounded-full bg-gradient-to-r from-slate-400 to-gray-500 flex items-center justify-center">
@@ -83,7 +81,6 @@ const AuditView = ({ selectedClaim, closeModal, formatDate, renderChanges }) => 
             </div>
           </div>
 
-          {/* Changes section */}
           <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
             Changes Made
           </h3>
@@ -93,10 +90,7 @@ const AuditView = ({ selectedClaim, closeModal, formatDate, renderChanges }) => 
         </div>
 
         <div className="px-5 py-4 bg-gray-50 border-t border-gray-100">
-          <button
-            onClick={closeModal}
-            className="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
+          <button onClick={closeModal} className="w-full cursor-pointer bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all focus:outline-none">
             Close
           </button>
         </div>

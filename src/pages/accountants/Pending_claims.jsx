@@ -10,13 +10,13 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const Pending_claims = () => {
-
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL
     const { pendingClaims, setPendingClaims } = useContext(APIContext);
     const [selectedClaim, setSelectedClaim] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const { isLoading, claim_payment } = PayClaim();
-    const BASE_URL = import.meta.env.VITE_BACKEND_URL
+    
 
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedMonth, setSelectedMonth] = useState(null);
@@ -249,16 +249,10 @@ const Pending_claims = () => {
                                     Are you sure you want to make this payment?
                                 </h3>
                                 <div className="mt-4 flex justify-end gap-4">
-                                    <button 
-                                        onClick={() => handleConfirmPayment(selectedClaim.claim_number)} 
-                                        className="bg-green-500 text-white cursor-pointer px-4 py-2 rounded hover:bg-green-600"
-                                    >
+                                    <button  oClick={() => handleConfirmPayment(selectedClaim.claim_number)} className="bg-green-500 text-white cursor-pointer px-4 py-2 rounded hover:bg-green-600">
                                         {isLoading ? <Loader className="animate-spin" /> : "Yes, Pay"}
                                     </button>
-                                    <button 
-                                        onClick={() => setShowModal(false)} 
-                                        className="bg-red-500 text-white cursor-pointer px-4 py-2 rounded hover:bg-red-600"
-                                    >
+                                    <button onClick={() => setShowModal(false)} className="bg-red-500 text-white cursor-pointer px-4 py-2 rounded hover:bg-red-600">
                                         Cancel
                                     </button>
                                 </div>

@@ -1,10 +1,8 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import Back from '../../components/Back';
 import { Loader, Upload, File, X } from 'lucide-react';
 import ErrorNotification from '../../components/ErrorNotification';
-import axios from 'axios';
-import { APIContext } from '../../utils/context/APIContextProvider';
 
 const StaffClaim = () => {
   const BASE_URL = import.meta.env.VITE_BACKEND_URL;
@@ -14,15 +12,6 @@ const StaffClaim = () => {
   const fileInputRef = useRef(null);
   const [duplicateError, setDuplicateError] = useState(null);
 
-  const { setclaimsHistory } = useContext(APIContext)
-
-  const re_fetch_claims = async () => {
-    const response = await axios.get(`${BASE_URL}/all_claims/`, {withCredentials: true})
-    if(response){
-      const data = response?.data
-      setclaimsHistory(data.data)
-    }
-  }
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -86,13 +75,17 @@ const StaffClaim = () => {
           fileInputRef.current.value = '';
         }
 
-        if (data.duplicates && data.duplicates.length > 0) {
+        if(data.duplicates && data.duplicates.length > 0) {
           setDuplicateError({
             message: `${data.duplicates.length} duplicate claim(s) found`,
             claims: data?.duplicates,
           });
         }
-        await re_fetch_claims()
+
+        toast.success(`please wait..`);
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
 
       } else {
         const errorData = await response.json();
@@ -108,7 +101,10 @@ const StaffClaim = () => {
 
   return (
     <div className="p-8">
-      <Back />
+      <div >
+        <Back />
+      </div>
+
       <div className="max-w-2xl mx-auto mt-8 bg-white rounded-lg shadow p-6">
         <h1 className="text-2xl font-bold mb-2">Upload Excel File</h1>
         <p className="text-gray-600 mb-6">Please upload the Excel file for the claim submission</p>

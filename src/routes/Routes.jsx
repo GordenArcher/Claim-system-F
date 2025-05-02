@@ -44,6 +44,7 @@ const PageRoutes = () => {
     return (
       <Routes>
         <Route path="/" element={<Blocked />} />
+        <Route path="*" element={<Navigate to={'/'} />} />
       </Routes>
     )
   }

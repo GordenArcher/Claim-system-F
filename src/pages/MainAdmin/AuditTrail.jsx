@@ -307,12 +307,12 @@ const AuditTable = () => {
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
                           <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-medium">
-                            {audit.full_name ? (audit.full_name[0]) : (audit.user.username[0])}
+                            {audit.full_name ? (audit?.full_name[0]) : (audit?.user?.username[0])}
                           </div>
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-extrabold text-gray-900">
-                            {audit.full_name ? audit.full_name : audit.user.username}
+                            {audit.full_name ? audit?.full_name : audit?.user?.username}
                           </div>
                           <div className="text-sm text-gray-500">
                             {audit?.user?.email ? audit?.user?.email : null}

@@ -50,8 +50,9 @@ const AdminDashboard = () => {
 
     const formatDate = (dateString) => {
       const date = new Date(dateString);
-      return date.toLocaleString();
-  };
+      return date.toDateString();
+    };
+
 
   const getStatusIcon = (status) => {
     switch(status) {
