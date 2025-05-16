@@ -18,6 +18,7 @@ import UserManagement from "../pages/administrators/UserManagement"
 import AuditTrail from "../pages/MainAdmin/AuditTrail"
 import SytemLogs from "../pages/administrators/SytemLogs"
 import Loader from '../components/PageLoader'
+import VerifyClaim from "../pages/VerifyClaim"
 
 const PageRoutes = () => {
   const { isAuthenticated, isLoadingAuth } = useContext(AuthContext)
@@ -32,6 +33,7 @@ const PageRoutes = () => {
     return (
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/staff/claim/verify" element={<VerifyClaim />} />
         <Route path="/auth/register" element={<Register />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
@@ -52,10 +54,9 @@ const PageRoutes = () => {
   return (
     <>
         <NavBar />
-
         <Routes>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/staff/claim/verify" element={<ClaimVerification />} />
+        <Route path="/admin/claim/verify" element={<ClaimVerification />} />
         <Route path="/claims/pending" element={<Pending_claims />} />
         <Route path="/claim/new" element={<NewStaffClaim />} />
         <Route path="/settings" element={<Settings />} />

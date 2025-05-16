@@ -1,7 +1,7 @@
 export const ClaimsNav = [
     {
       title: "Claim Lookup",
-      path: "/staff/claim/verify/",
+      path: "/admin/claim/verify/",
       icon: "search",
       roles: ["accountant", "administrator", "main_administrator"],
     },

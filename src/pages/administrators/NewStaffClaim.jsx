@@ -81,11 +81,12 @@ const StaffClaim = () => {
             claims: data?.duplicates,
           });
         }
-
+        
         toast.success(`please wait..`);
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
+        // setTimeout(() => {
+        //   window.location.reload();
+        //   window.location.href = '/'
+        // }, 3000);
 
       } else {
         const errorData = await response.json();

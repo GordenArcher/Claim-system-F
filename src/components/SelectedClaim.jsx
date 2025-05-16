@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
 import DeleteClaim from "../api/Delete_claim";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Trash2, Loader } from "lucide-react";
+import { AuthContext } from "../utils/context/AuthContextProvider";
 
 const SelectedClaim = ({ selectedClaim, formatDate, closeModal }) => {
   const { handleDeleteClaim, isdeletingClaim } = DeleteClaim();
   const [showModalPop, setShowModalPop] = useState(false);
+  const { isAuthenticated } = useContext(AuthContext)
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -98,15 +100,19 @@ const SelectedClaim = ({ selectedClaim, formatDate, closeModal }) => {
               Close
             </button>
 
-            <div className="relative group" title="Delete claim">
-              <button onClick={() => setShowModalPop(true)} className="flex items-center cursor-pointer gap-1 text-red-600 hover:text-red-400 transition-colors">
-                <Trash2 />
-              </button>
+            {isAuthenticated && (
+              <div className="relative group" title="Delete claim">
+                <button onClick={() => setShowModalPop(true)} className="flex items-center cursor-pointer gap-1 text-red-600 hover:text-red-400 transition-colors">
+                  <Trash2 />
+                </button>
 
-              <div className="absolute left-1/2 -translate-x-1/2 -top-9 px-2 py-1 text-xs text-white bg-gray-800 rounded shadow opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-1 transition-all duration-200">
-                Delete
+                <div className="absolute left-1/2 -translate-x-1/2 -top-9 px-2 py-1 text-xs text-white bg-gray-800 rounded shadow opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-1 transition-all duration-200">
+                  Delete
+                </div>
               </div>
-            </div>
+            )}
+
+            
           </div>
         </div>
       </motion.div>

@@ -249,8 +249,8 @@ const Pending_claims = () => {
                                     Are you sure you want to make this payment?
                                 </h3>
                                 <div className="mt-4 flex justify-end gap-4">
-                                    <button  oClick={() => handleConfirmPayment(selectedClaim.claim_number)} className="bg-green-500 text-white cursor-pointer px-4 py-2 rounded hover:bg-green-600">
-                                        {isLoading ? <Loader className="animate-spin" /> : "Yes, Pay"}
+                                    <button  onClick={() => handleConfirmPayment(selectedClaim.claim_number)} className="bg-green-500 text-white cursor-pointer px-4 py-2 rounded hover:bg-green-600">
+                                        {isLoading ? (<div className="flex items-center gap-1"><Loader className="animate-spin" /> <span>a moment</span></div>) : "Yes, Pay"}
                                     </button>
                                     <button onClick={() => setShowModal(false)} className="bg-red-500 text-white cursor-pointer px-4 py-2 rounded hover:bg-red-600">
                                         Cancel

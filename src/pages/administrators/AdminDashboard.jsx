@@ -11,7 +11,8 @@ import {
   DollarSign, 
   CreditCard, 
   ListChecks, 
-  Calendar
+  Calendar,
+  QrCodeIcon
 } from 'lucide-react';
 import Back from '../../components/Back';
 import { APIContext } from '../../utils/context/APIContextProvider';
@@ -27,6 +28,7 @@ import { format } from 'date-fns'
 import "react-datepicker/dist/react-datepicker.css";
 import Get_data_by_month from '../../api/Get_data_by_month';
 import SkeletonLoader from '../../components/SkeletonLoader';
+import QRCode from '../QR-code';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -275,6 +277,9 @@ const AdminDashboard = () => {
         <button className={`px-4 cursor-pointer py-2 font-medium ${activeTab === 'reports' ? 'text-gray-600 border-b-2 border-gray-600' : 'text-gray-600'}`} onClick={() => setActiveTab('reports')}>
           Reports
         </button>
+        <button className={`px-4 cursor-pointer py-2 font-medium ${activeTab === 'qr-code' ? 'text-gray-600 border-b-2 border-gray-600' : 'text-gray-600'}`} onClick={() => setActiveTab('qr-code')}>
+          QR Code
+        </button>
       </div>
 
       {activeTab === 'overview' && (
@@ -323,11 +328,17 @@ const AdminDashboard = () => {
         <ClaimsTable claimsHistory={claimsHistory} openModal={openModal} />
       )}
 
-        {activeTab === 'reports' && 
-            <div className="bg-white p-4 rounded-lg">
-                <ClaimsReportsTab />
-            </div>
-        }
+      {activeTab === 'reports' && 
+          <div className="bg-white p-4 rounded-lg">
+              <ClaimsReportsTab />
+          </div>
+      }
+
+      {activeTab === 'qr-code' && 
+        <div className="bg-white p-4 rounded-lg">
+            <QRCode />
+        </div>
+      }
 
       <AnimatePresence>
         {isOpen && selectedClaim && (

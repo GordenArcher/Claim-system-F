@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Search, Loader, X } from 'lucide-react';
 import Verify_Claim from '../../api/Verify_claim';
 import Back from '../../components/Back';
-import { Menu } from "lucide-react";
 import SelectedClaim from '../../components/SelectedClaim';
 import PayClaim from '../../api/Pay_Claim';
 
@@ -49,20 +48,11 @@ const ClaimSearchAndDisplay = () => {
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-gray-400" />
             </div>
-            <input
-              type="text"
-              className="block w-full h-[55px] pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:border-black transition duration-300"
-              placeholder="Search by request number"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+
+            <input type="text" className="block w-full h-[55px] pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:border-black transition duration-300" placeholder="Search by request number or staff number" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}/>
           </div>
-          <button
-            type="submit"
-            onClick={() => get_Claim(searchQuery)}
-            className="bg-gray-600 cursor-pointer text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none"
-            disabled={loading}
-          >
+          
+          <button type="submit" onClick={() => get_Claim(searchQuery)} className="bg-gray-600 cursor-pointer text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none" disabled={loading}>
             {loading ? (
               <Loader className="h-5 w-5 animate-spin" />
             ) : (

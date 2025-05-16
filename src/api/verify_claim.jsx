@@ -9,7 +9,7 @@ const Verify_Claim = () => {
   const [loading, setLoading] = useState(false);
 
   const get_Claim = async (claim_data) => {
-    if (!claim_data) return toast.error("No claim_data provided.");
+    if (!claim_data) return toast.error("No claim data provided.");
     
     setError(null);
     setStaff_claim(null);
@@ -22,7 +22,7 @@ const Verify_Claim = () => {
           "Content-Type": "application/json",
           'X-CSRFToken': localStorage.getItem("csrf"),
         },
-        credentials: "include",
+        // credentials: "include",
         body: JSON.stringify({"claim_data": claim_data})
       });
 

@@ -9,6 +9,7 @@ import Get_report_summery from "../../api/Get_Summery"
 import Get_audit from "../../api/Get_auditTrials"
 import { Get_users_logs } from "../../api/Get_staff_logs"
 import { Get_Claim_Status } from "../../api/Get_staff_processes"
+import Get_QR from "../../api/Get_QR"
 
 export const APIContext = createContext()
 
@@ -29,6 +30,7 @@ const APIContextProvider = ({ children }) => {
   const { allAudit } = Get_audit()
   const { systemLogs } = Get_users_logs()
   const { claimStatus} = Get_Claim_Status()
+  const { loadingQr, qrCode, error } = Get_QR()
 
   useEffect(() => {
     if (pendingData) setPendingClaims(pendingData)
@@ -55,10 +57,14 @@ const APIContextProvider = ({ children }) => {
     auditTrails: allAudit || [],
     logsSystem: systemLogs || [],
     claimStatusData,
+    qrCode, 
+    loadingQr,
+    error
   }), [
     pendingClaims, claimsHistory, recentClaims, paymentHistory,
     user, isLoadingUser, allUsers, isGettingUsers,
-    summeryReports, allAudit, systemLogs, claimStatusData
+    summeryReports, allAudit, systemLogs, claimStatusData, qrCode,
+    loadingQr, error
   ])
 
   return (
